@@ -1,0 +1,113 @@
+---
+version: '3'
+dotenv: [.env]
+includes:
+  common:
+    taskfile: ./taskfiles/Taskfile.common.yml
+vars:
+  BINARY_NAME: golang-cli-boilerplate
+tasks:
+  default:
+    cmds:
+      - task: common:default
+        # ****************************************************
+        # Pre-commit
+        # ****************************************************
+  pre-commit-install:
+    desc: Initialize and install required hooks
+    cmds:
+      - task: common:hooks-install
+  pre-commit:
+    desc: Run all the pre-configured pre-commit hooks.
+    cmds:
+      - task: common:hooks
+  pre-commit-init:
+    desc: Initialize pre-commit
+    cmds:
+      - ./scripts/hooks/pre-commit-init.sh --hook-type=commit
+      - ./scripts/hooks/pre-commit-init.sh --hook-type=prepush
+  snapshot:
+    cmds:
+      - goreleaser check
+      - goreleaser release --snapshot --rm-dist --skip-publish
+  release:
+    cmds:
+      - goreleaser check
+      - export GITHUB_TOKEN=${GITHUB_TOKEN} && goreleaser release --rm-dist
+      # ****************************************************
+      # Go Tasks
+      # ****************************************************
+  go-tidy:
+    desc: Tidy go modules
+    cmds:
+      - go mod tidy
+  go-fmt:
+    desc: Run go fmt against code
+    cmds:
+      - go fmt -x ./...
+  go-vet:
+    desc: Run go vet against code
+    cmds:
+      - go vet ./...
+  go-lint:
+    desc: Run go lint against code
+    cmds:
+      - golangci-lint run -v -E gofmt --config .golangci.yaml
+  go-style:
+    desc: Code style -> fmt,vet,lint
+    deps: [go-fmt, go-vet, go-lint]
+  go-test:
+    desc: Run unit test
+    cmds:
+      - echo "===========> Run unit test"
+      - go test -race -v ./...
+      # ****************************************************
+      # CLI & Development Tasks
+      # ****************************************************
+  cli-build:
+    desc: Build CLI
+    cmds:
+      - |
+        # Call the script
+        scripts/golang/go_build.sh {{.BINARY_NAME}}
+    vars:
+      BINARY_PATH:
+        sh: echo "{{.BINARY_PATH | default "dist"}}"
+  cli-run:
+    desc: Run CLI
+    cmds:
+      - ./{{.BINARY_NAME}} {{.CLI_ARGS}}
+      # ****************************************************
+      # Docker Tasks
+      # ****************************************************
+  docker-build-refresh:
+    desc: Build Docker image entirely from scratch
+    cmds:
+      - |
+        ./scripts/containers/build-and-run.sh --image={{.BINARY_NAME}} \
+        --rebuild=true \
+        --action=build \
+        --dockerfile={{.CLI_ARGS}}
+  docker-build:
+    desc: Build Docker image only if it doesn't exist previously.
+    cmds:
+      - |
+        ./scripts/containers/build-and-run.sh --image={{.BINARY_NAME}} \
+         --rebuild=false \
+         --action=build \
+         --dockerfile={{.CLI_ARGS}}
+  docker-build-and-run:
+    desc: Build and run the CLI on Docker
+    cmds:
+      - |
+        ./scripts/containers/build-and-run.sh --image={{.BINARY_NAME}} \
+         --rebuild=true \
+         --action=all \
+         --dockerfile={{.CLI_ARGS}}
+  docker-run:
+    desc: Run the CLI on Docker from an already built image
+    cmds:
+      - |
+        ./scripts/containers/build-and-run.sh --image={{.BINARY_NAME}} \
+         --rebuild=false \
+         --action=run

@@ -1,0 +1,8 @@
+formatter:
+  type: basic
+  include_document_start: true
+  indent: 2
+  column: 80
+  lineBreak: unix
+  sequenceStyle: block
+  mapStyle: block

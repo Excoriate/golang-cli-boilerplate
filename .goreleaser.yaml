@@ -1,0 +1,72 @@
+---
+project_name: golang-cli-boilerplate
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+release:
+  prerelease: auto
+nfpms:
+  - file_name_template: '{{ .ProjectName }}_{{ .Arch }}'
+    maintainer: alex_torres@outlook.com
+    homepage: https://ecs-deployer-cli.dev
+    description: >-
+      ECS Deployer is a CLI tool for deploying ECS services and tasks, plus other nice stuffs.
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/bin
+    section: utils
+    contents:
+      - src: ./LICENSE
+        dst: /usr/share/doc/nfpm/copyright
+        file_info:
+          mode: 0644
+sboms:
+  - artifacts: archive
+brews:
+  - tap:
+      owner: Excoriate
+      name: homebrew-tap
+      branch: main
+    # yamllint disable-line rule:comments rule:line-length
+    url_template: https://github.com/Excoriate/golang-cli-boilerplate/releases/download/{{ .Tag }}/{{ .ArtifactName }}
+    commit_author:
+      name: Excoriate
+      email: alex_torres@outlook.com
+    folder: Formula
+    homepage: https://github.com/Excoriate/golang-cli-boilerplate
+    description: >-
+      ECS Deployer is a CLI tool for deploying ECS services and tasks, plus other nice stuffs.
+    license: MIT
+archives:
+  - wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: checksums.txt
+snapshot:
+  name_template: '{{ .Tag }}-next'
+changelog:
+  skip: true
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^*.md:'

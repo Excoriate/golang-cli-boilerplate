@@ -1,0 +1,170 @@
+---
+version: '3'
+vars:
+  SRC_DIR: '{{default "." .SRC_DIR}}'
+  TEST_NAME_PREFIX: '{{default "Test" .TEST_NAME_PREFIX}}'
+  TEST_TYPE: '{{default "unit" .TEST_TYPE}}'
+tasks:
+  clean:
+    desc: Clean all the .terraform cache, and golang cache or binaries compiled if applicable.
+    cmds:
+      - |
+        echo "Working directory passed: {{.SRC_DIR}}"
+        echo "Full path: $(pwd)/{{.SRC_DIR}}"
+        echo ""
+
+        cd {{.SRC_DIR}}
+
+        if [ -f "go.mod" ]; then
+          go clean -cache -testcache -modcache -i -r
+        fi
+
+        if [ -d ".terraform" ]; then
+          rm -rf .terraform
+        fi
+
+        echo "[ ok ] Cleaned all the cache"
+        echo "------------------------------------------------------------"
+    silent: true
+  is-valid-terratest:
+    desc: Check if the terratest folder is valid
+    cmds:
+      - |
+        echo "Working directory passed: {{.SRC_DIR}}"
+        echo "Full path: $(pwd)/{{.SRC_DIR}}"
+        echo ""
+
+        echo "       _______"
+        echo "      /       \\"
+        echo "      |   0   |"
+        echo "      |   _   |"
+        echo "      \_______/"
+        echo "Running terratest pre-checks"
+        echo "============================================================"
+
+        src_dir=$(dirname {{.SRC_DIR}})
+        module=$(basename $src_dir)
+        recipe={{.TEST_NAME_PREFIX}}
+        testType={{.TEST_TYPE}}
+        testName="Test${module^}${recipe^}${testType^}"
+        testDirResolved="$module/$testType"
+
+        if [ ! -f "{{.SRC_DIR}}/go.mod" ]; then
+          echo "[ x ] go.mod file not found in {{.SRC_DIR}}"
+          exit 1
+        fi
+
+        echo "[ ! ] Test src dir: $src_dir"
+        echo "-----------------------------------------"
+        echo "[ ! ] Test module: $module"
+        echo "-----------------------------------------"
+        echo "[ ! ] Test recipe: $recipe"
+        echo "-----------------------------------------"
+        echo "[ ! ] Test directory selected: $testDirResolved"
+        echo "-----------------------------------------"
+        echo ""
+
+        if [ "$testType" != "integration" ] && [ "$testType" != "unit" ]; then
+          echo "[ x ] Invalid test type. Must be either integration or unit"
+          exit 1
+        fi
+
+        if [[ $testName != Test* ]]; then
+            echo "[ x ] Invalid test name. Must start with the word Test"
+            exit 1
+        fi
+
+        if [ ! -d "$testDirResolved" ]; then
+            echo "[ x ] Invalid test directory. Could not find $testDirResolved"
+            exit 1
+        fi
+
+        cd $testDirResolved
+
+        TEST_FILES=$(find . -name "*_test.go")
+
+        echo "[ ! ] Test files found: $TEST_FILES"
+
+        if [! -n "$TEST_FILES" ]; then
+            echo "[ x ] Could not find any Go test files in $SRC_DIR"
+            exit 1
+        fi
+
+        echo "[ ok ] All pre-checks passed"
+    silent: true
+  run-all-nocache:
+    desc: Run all the Go tests in this directory, without cache.
+    cmds:
+      - |
+        echo "       _______"
+        echo "      /       \\"
+        echo "      |   0   |"
+        echo "      |   _   |"
+        echo "      \_______/"
+        echo "Running Tests without cache"
+        echo "============================================================"
+
+        src_dir=$(dirname {{.SRC_DIR}})
+        module=$(basename $src_dir)
+        recipe={{.TEST_NAME_PREFIX}}
+        testType={{.TEST_TYPE}}
+        testName="Test${module^}${recipe^}${testType^}"
+        testDirResolved="$module/$testType"
+
+        if [ ! -d "$testDirResolved" ]; then
+            echo "[ x ] Invalid test directory. Could not find $testDirResolved"
+            exit 1
+        fi
+
+        cd $testDirResolved
+
+        pattern="$testName"
+        function_names=$(grep -r -E -o "$pattern[^(]*" . | sort | uniq)
+
+        if [ -z "$function_names" ]; then
+          echo "[ x ] No tests found with prefix $pattern"
+          exit 1
+        else
+          echo "[ ! ] Found tests: $function_names"
+          go test -v -count=1 -timeout 30m -parallel 128 -run "^$testName"
+          echo "[ ok ] Finished running terratest tests"
+        fi
+    silent: true
+  run-all-cache:
+    desc: Run all the Go tests in this directory, with cache.
+    cmds:
+      - |
+        echo "       _______"
+        echo "      /       \\"
+        echo "      |   0   |"
+        echo "      |   _   |"
+        echo "      \_______/"
+        echo "Running Test with cache"
+        echo "============================================================"
+
+        src_dir=$(dirname {{.SRC_DIR}})
+        module=$(basename $src_dir)
+        recipe={{.TEST_NAME_PREFIX}}
+        testType={{.TEST_TYPE}}
+        testName="Test${module^}${recipe^}${testType^}"
+        testDirResolved="$module/$testType"
+
+        if [ ! -d "$testDirResolved" ]; then
+            echo "[ x ] Invalid test directory. Could not find $testDirResolved"
+            exit 1
+        fi
+
+        cd $testDirResolved
+
+        pattern="$testName"
+        function_names=$(grep -r -E -o "$pattern[^(]*" . | sort | uniq)
+
+        if [ -z "$function_names" ]; then
+          echo "[ x ] No tests found with prefix $pattern"
+          exit 1
+        else
+          echo "[ ! ] Found tests: $function_names"
+          go test -v -timeout 30m -parallel 128 -run "^$testName"
+          echo "[ ok ] Finished running terratest tests"
+        fi
+    silent: true
