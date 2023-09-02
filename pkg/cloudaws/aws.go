@@ -84,9 +84,8 @@ func GetAWSCredentialsValueByKey(key string) (*AWSCred, error) {
 			Value: val,
 			IsSet: true,
 		}, nil
-	} else {
-		return nil, fmt.Errorf("AWS credential with key '%s' not found in environment variables", key)
 	}
+	return nil, fmt.Errorf("AWS credential with key '%s' not found in environment variables", key)
 }
 
 func IsAWSCredSet(key string) error {

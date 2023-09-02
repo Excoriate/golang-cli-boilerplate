@@ -11,13 +11,12 @@ import (
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/o11y"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
-	"go.uber.org/zap"
 )
 
 type Builder struct {
 	cliApp      *types.App
 	cfg         config.EnvironmentScanner
-	logger      *zap.Logger
+	logger      o11y.LoggerInterface
 	ctx         context.Context
 	ux          *UX
 	initOptions InitOptions
@@ -25,7 +24,7 @@ type Builder struct {
 
 type Client struct {
 	App    *types.App
-	Logger *zap.Logger
+	Logger o11y.LoggerInterface
 	Ctx    context.Context
 	UX     *UX
 }
@@ -113,7 +112,10 @@ func (b *Builder) WithDotEnvFile() InitOptionsFunc {
 }
 
 func New(ctx context.Context, options InitOptions) *Builder {
-	logger := o11y.NewLogger()
+	logger := o11y.NewLogger(o11y.LoggerOptions{
+		RegisterCallerFunction: true,
+		WriteToStdout:          false, // It'll be written to stderr.
+	})
 
 	// Load basic configuration.
 	cliApp := config.NewCLIApp(logger)

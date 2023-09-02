@@ -1,7 +1,8 @@
-package yamlparser
+package parser
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -50,4 +51,30 @@ func ConvertTemplateIntoYAML(tmpl bytes.Buffer) (interface{}, error) {
 	}
 
 	return result, nil
+}
+
+func ConvertStructToYAML(v interface{}) ([]byte, error) {
+	if v == nil {
+		return nil, fmt.Errorf("failed to marshal struct to yaml: the struct is nil")
+	}
+
+	yml, err := yaml.Marshal(v)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal struct to yaml: %s", err.Error())
+	}
+
+	return yml, nil
+}
+
+func ConvertStuctToJSON(v interface{}) ([]byte, error) {
+	if v == nil {
+		return nil, fmt.Errorf("failed to marshal struct to json: the struct is nil")
+	}
+
+	content, err := json.Marshal(v)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal struct to json: %s", err.Error())
+	}
+
+	return content, nil
 }

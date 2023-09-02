@@ -3,14 +3,15 @@ package cloudaws
 import (
 	"context"
 
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/o11y"
+
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"go.uber.org/zap"
 )
 
 type ECSConnector struct {
 	Client *ecs.Client
 	Ctx    context.Context
-	Logger *zap.Logger
+	Logger o11y.LoggerInterface
 }
 
 type ECSReader interface {
@@ -19,7 +20,7 @@ type ECSReader interface {
 	ListTaskDefinitions() (*ecs.ListTaskDefinitionsOutput, error)
 }
 
-func NewECSConnector(ctx context.Context, client *ecs.Client, logger *zap.Logger) *ECSConnector {
+func NewECSConnector(ctx context.Context, client *ecs.Client, logger o11y.LoggerInterface) *ECSConnector {
 	return &ECSConnector{
 		Client: client,
 		Logger: logger,

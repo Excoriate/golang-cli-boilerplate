@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Excoriate/golang-cli-boilerplate/internal/sdout"
+
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cloudaws"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/tui"
@@ -69,7 +71,7 @@ different type of actions on top of it.`,
 		awsRegionPassed := viper.GetString("awsRegion")
 
 		// Instantiating client.
-		adapter, err := cloudaws.NewClient(cliClient.Ctx, cliClient.Logger, cloudaws.InitAWSAdapterOptions{
+		aws, err := cloudaws.NewClient(cliClient.Ctx, cliClient.Logger, cloudaws.InitAWSAdapterOptions{
 			Region: awsRegionPassed,
 			Creds: cloudaws.AWSCreds{
 				AccessKeyID:     awsAccessKeyPassed,
@@ -84,7 +86,7 @@ different type of actions on top of it.`,
 			os.Exit(1)
 		}
 
-		ecsAdapter, err := adapter.Build(adapter.WithECS())
+		adapter, err := aws.Build(aws.WithECS())
 		if err != nil {
 			cliClient.UX.Messages.ShowError(tui.MessageOptions{
 				Message: err.Error(),
@@ -92,19 +94,74 @@ different type of actions on top of it.`,
 			os.Exit(1)
 		}
 
-		ecsConnector := cloudaws.NewECSConnector(cliClient.Ctx, ecsAdapter.ECSClient, cliClient.Logger)
+		// Connector instantiation.j
+		ecsConnector := cloudaws.NewECSConnector(cliClient.Ctx, adapter.ECSClient, cliClient.Logger)
 
+		// List ECS clusters.
 		result, _ := ecsConnector.ListECSClusters()
-		headers := []string{"#", "CLUSTER"}
-		var data [][]string
-		for i, cluster := range result.ClusterArns {
-			data = append(data, []string{strconv.Itoa(i), cluster})
+
+		// Checking if the output option (-o or --output) was passed.
+		option := viper.GetString("output")
+		save := viper.GetBool("save")
+		if option == "" {
+			option = "table"
 		}
 
-		_ = tui.ShowTable(tui.TableOptions{
-			Headers: headers,
-			Data:    data,
-		})
+		// if option is yaml or yml, it's equivalent. So, always set yaml
+		if option == "yaml" {
+			option = "yml"
+		}
+
+		clusters := struct {
+			ClusterArns []string `json:"clusterArns" yaml:"clusterArns"`
+		}{}
+
+		clusters.ClusterArns = append(clusters.ClusterArns, result.ClusterArns...)
+
+		switch option {
+		case "table":
+			// Show table.
+			headers := []string{"#", "CLUSTER"}
+			var data [][]string
+			for i, cluster := range result.ClusterArns {
+				data = append(data, []string{strconv.Itoa(i), cluster})
+			}
+
+			_ = tui.ShowTable(tui.TableOptions{
+				Headers: headers,
+				Data:    data,
+			})
+		case "yml":
+			if err := sdout.ShowYAML(sdout.StOutOptions{
+				Data:       clusters,
+				SaveInDisk: save,
+				Filename:   "ecs-clusters.yml",
+			}); err != nil {
+				cliClient.UX.Messages.ShowError(tui.MessageOptions{
+					Message: err.Error(),
+				})
+				os.Exit(1)
+			}
+
+		case "json":
+			if err := sdout.ShowJSON(sdout.StOutOptions{
+				Data:       clusters,
+				SaveInDisk: save,
+				Filename:   "ecs-clusters.json",
+			}); err != nil {
+				cliClient.UX.Messages.ShowError(tui.MessageOptions{
+					Message: err.Error(),
+				})
+				os.Exit(1)
+			}
+		}
+
+		if save {
+			// Convert the struct to an array of bytes []byte
+			cliClient.UX.Messages.ShowInfo(tui.MessageOptions{
+				Message: "File ecs-clusters successfully saved.",
+			})
+		}
 	},
 }
 

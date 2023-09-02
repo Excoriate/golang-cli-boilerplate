@@ -17,6 +17,7 @@ var (
 	scanEnvVarsFromHost bool
 	dotEnvFile          string
 	output              string
+	save                bool
 )
 
 const CLIName = "golang-cli-boilerplate"
@@ -70,8 +71,13 @@ func addPersistentFlagsToRootCMD() {
 
 	rootCmd.PersistentFlags().StringVarP(&output,
 		"output",
-		"o", "",
-		"Output format. One of: json|yaml/yml|text")
+		"o", "table",
+		"Output format. One of: json|yaml/yml|table. If not provided, it defaults to table.")
+
+	rootCmd.PersistentFlags().BoolVarP(&save,
+		"save",
+		"s", false,
+		"Save output to file. If not provided, it defaults to stdout.")
 
 	_ = viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 	_ = viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
@@ -79,6 +85,7 @@ func addPersistentFlagsToRootCMD() {
 	_ = viper.BindPFlag("dotEnvFile", rootCmd.PersistentFlags().Lookup("dot-env-file"))
 	_ = viper.BindPFlag("scanEnvVarsFromHost", rootCmd.PersistentFlags().Lookup("scan-env-vars-from-host"))
 	_ = viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
+	_ = viper.BindPFlag("save", rootCmd.PersistentFlags().Lookup("save"))
 }
 
 func initConfig() {

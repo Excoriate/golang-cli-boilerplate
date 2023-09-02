@@ -5,13 +5,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/o11y"
+
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/errs"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"go.uber.org/zap"
-
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
@@ -37,14 +37,14 @@ type AWSAdapter struct {
 	ECSClient            *ecs.Client
 	ECRClient            *ecr.Client
 	CloudWatchLogsClient *cloudwatchlogs.Client
-	Logger               *zap.Logger
+	Logger               o11y.LoggerInterface
 }
 
 type Builder struct {
 	region                string
 	sharedCredentialsFile string
 	profile               string
-	logger                *zap.Logger
+	logger                o11y.LoggerInterface
 	// The one that's injected into each specific client.
 	adapter aws.Config
 	// Clients.
@@ -105,7 +105,7 @@ func (b *Builder) WithCloudWatchLogs() func(*InitAWSAdapterOptions) error {
 	}
 }
 
-func NewClient(ctx context.Context, l *zap.Logger, options InitAWSAdapterOptions) (*Builder,
+func NewClient(ctx context.Context, l o11y.LoggerInterface, options InitAWSAdapterOptions) (*Builder,
 	error) {
 	logger := l
 	if options.Region == "" {

@@ -1,4 +1,4 @@
-package yamlparser
+package parser
 
 import (
 	"testing"

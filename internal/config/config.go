@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/o11y"
 
-	"go.uber.org/zap"
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/env"
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/errs"
@@ -61,7 +61,7 @@ func (c *Cfg) ScanEnvVarsFromHost() (types.EnvVars, error) {
 	return envVarsScanned, nil
 }
 
-func NewCLIApp(logger *zap.Logger) *types.App {
+func NewCLIApp(logger o11y.LoggerInterface) *types.App {
 	cfg := &types.App{
 		EnvVars: types.EnvVars{},
 	}
@@ -69,8 +69,14 @@ func NewCLIApp(logger *zap.Logger) *types.App {
 	homeDir, _ := os.UserHomeDir()
 	currentDir, _ := os.Getwd()
 
-	logger.Info("Home directory", zap.String("homeDir", homeDir))
-	logger.Info("Current directory", zap.String("currentDir", currentDir))
+	logger.Info("Home directory", o11y.LoggerArg{
+		Key:   "homeDir",
+		Value: homeDir,
+	})
+	logger.Info("Current directory", o11y.LoggerArg{
+		Key:   "currentDir",
+		Value: currentDir,
+	})
 
 	cfg.CurrentDir = currentDir
 	cfg.HomeDir = homeDir

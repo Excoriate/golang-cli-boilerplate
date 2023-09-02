@@ -1,9 +1,11 @@
-package yamlparser
+package parser
 
 import (
 	"fmt"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
 )

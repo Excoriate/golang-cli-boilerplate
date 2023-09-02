@@ -55,3 +55,20 @@ func DirExistAndHasContent(dirPath string) error {
 
 	return nil
 }
+
+func WriteFileWithContent(filename string, content []byte) error {
+	if filename == "" {
+		return fmt.Errorf("failed to write a file, filename is empty")
+	}
+
+	if len(content) == 0 {
+		return fmt.Errorf("failed to write a file, content is empty")
+	}
+
+	err := os.WriteFile(filename, content, 0o644)
+	if err != nil {
+		return fmt.Errorf("failed to write a file, error: %s", err.Error())
+	}
+
+	return nil
+}
