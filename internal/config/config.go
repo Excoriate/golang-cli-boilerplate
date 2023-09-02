@@ -50,7 +50,7 @@ func (c *Cfg) GetEnvVarsFromDotEnvFile(dotEnvFile string, currentEnvVars types.E
 // If it success, it'll attach the found environment variables to the current configuration
 // If it fails, it'll return an error
 func (c *Cfg) ScanEnvVarsFromHost() (types.EnvVars, error) {
-	envVarsScanned, err := env.GetAllFromHost()
+	envVarsScanned, err := env.ScanEnvVarsFromHost()
 	if err != nil {
 		return nil, errs.NewConfigurationErr(errs.Opts{
 			Error:   err,

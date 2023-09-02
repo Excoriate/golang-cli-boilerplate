@@ -1,11 +1,16 @@
 package env
 
-import "github.com/spf13/viper"
+import (
+	"fmt"
 
-func BindAWSKeysToViper() error {
-	if err := viper.BindEnv("awsAccessKeyID", "AWS_ACCESS_KEY_ID"); err != nil {
-		return err
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
+)
+
+func ScanAWSEnvVarsFromHost() (types.EnvVars, error) {
+	envVarsWithPrefix, err := ScanEnvVarsWithPrefix("AWS_")
+	if err != nil {
+		return nil, fmt.Errorf("failed to scan env vars with prefix AWS_: %w", err)
 	}
 
-	return viper.BindEnv("awsSecretAccessKey", "AWS_SECRET_ACCESS_KEY")
+	return envVarsWithPrefix, nil
 }

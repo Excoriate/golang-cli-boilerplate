@@ -22,9 +22,9 @@ const CLIName = "golang-cli-boilerplate"
 var rootCmd = &cobra.Command{
 	Version: "v0.0.1",
 	Use:     CLIName,
-	Long: `ecs-deployer is a cmd-line tool that helps you manage your ECS services, and,
+	Long: fmt.Sprintf(`%s is a cmd-line tool that helps you manage your ECS services, and,
 	related AWS infrastructure easily. It can be used in a stand-alone mode, or, as a
-	library in your Go projects.`,
+	library in your Go projects.`, CLIName),
 	Example: `
 	  ecs-deployer deploy --service=myservice --cluster=mycluster`,
 	Run: func(cmd *cobra.Command, args []string) {

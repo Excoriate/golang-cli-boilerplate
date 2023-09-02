@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
-
-	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
 )
 
 func GetFromMultiplePotentialKeys(keysAllowed []string) (types.EnvVar, error) {
@@ -104,16 +102,4 @@ func GetDurationOrDefault(key string, defaultValue time.Duration) time.Duration 
 	}
 
 	return parsedValue
-}
-
-// GetAllFromHost Get all env vars.
-func GetAllFromHost() (types.EnvVars, error) {
-	result := make(types.EnvVars)
-
-	for _, env := range os.Environ() {
-		keyValue := strings.Split(env, "=")
-		result[keyValue[0]] = utils.RemoveDoubleQuotes(keyValue[1])
-	}
-
-	return result, nil
 }

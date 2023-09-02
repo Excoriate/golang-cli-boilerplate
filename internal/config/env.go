@@ -12,7 +12,7 @@ import (
 
 // GetEnvVarsFromHost GetEnvVarsCfg returns the environment variables configuration
 func GetEnvVarsFromHost() (types.EnvVars, error) {
-	return env.GetAllFromHost()
+	return env.ScanEnvVarsFromHost()
 }
 
 func GetEnvVarsFromDotEnv(dotEnvFile string) (types.EnvVars, error) {
