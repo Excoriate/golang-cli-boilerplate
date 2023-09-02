@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/cliutils"
+
 	"github.com/Excoriate/golang-cli-boilerplate/internal/sdout"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cloudaws"
@@ -15,18 +17,6 @@ import (
 	"github.com/Excoriate/golang-cli-boilerplate/internal/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-var (
-	// awsRegion is the AWS region to carry out operations in.
-	// It is a global flag that can be used by all commands.
-	awsRegion string
-	// awsAccessKeyId is the AWS Access Key ID.
-	// It is a global flag that can be used by all commands.
-	awsAccessKeyID string
-
-	// awsSecretAccessKey is the AWS Secret Access Key.
-	awsSecretAccessKey string
 )
 
 var cliClient *cli.Client
@@ -166,24 +156,41 @@ different type of actions on top of it.`,
 }
 
 func addPersistentFlags() {
-	Cmd.PersistentFlags().StringVarP(&awsRegion, "aws-region", "",
-		"us-east-1", "The AWS region to carry out operations in.")
+	err := cliutils.AddFlags(Cmd, []cliutils.CobraFlagOptions{
+		{
+			LongName:     "aws-region",
+			Usage:        "The AWS region to carry out operations in.",
+			IsPersistent: true,
+			IsRequired:   true, // It'll fail if the flag is not passed.
+			ViperBindingCfg: cliutils.CobraViperBindingOptions{
+				EnvVariableNameInViper: "awsRegion",
+				EnvVariableNameInHost:  "AWS_REGION", // replace with actual env variable name
+				IsEnabled:              true,
+			},
+		},
+		{
+			LongName:     "aws-access-key-id",
+			Usage:        "The AWS Access Key ID. If it's not set, it'll be read from the AWS_ACCESS_KEY_ID environment variable.",
+			IsPersistent: true,
+			ViperBindingCfg: cliutils.CobraViperBindingOptions{
+				EnvVariableNameInViper: "awsAccessKeyId",
+				EnvVariableNameInHost:  "AWS_ACCESS_KEY_ID", // replace with actual env variable name
+				IsEnabled:              true,
+			},
+		},
+		{
+			LongName:     "aws-secret-access-key",
+			Usage:        "The AWS Secret Access Key. If it's not set, it'll be read from the AWS_SECRET_ACCESS_KEY environment variable.",
+			IsPersistent: true,
+			ViperBindingCfg: cliutils.CobraViperBindingOptions{
+				EnvVariableNameInViper: "awsSecretAccessKey",
+				EnvVariableNameInHost:  "AWS_SECRET_ACCESS_KEY", // replace with actual env variable name
+				IsEnabled:              true,
+			},
+		},
+	})
 
-	Cmd.PersistentFlags().StringVarP(&awsAccessKeyID, "aws-access-key-id", "",
-		"", "The AWS Access Key ID. If it's not set, it'll be read from the AWS_ACCESS_KEY_ID environment variable.")
-
-	Cmd.PersistentFlags().StringVarP(&awsSecretAccessKey, "aws-secret-access-key", "",
-		"", "The AWS Secret Access Key. If it's not set, it'll be read from the AWS_SECRET_ACCESS_KEY environment variable.")
-
-	_ = viper.BindPFlag("awsRegion", Cmd.PersistentFlags().Lookup("aws-region"))
-	_ = viper.BindPFlag("awsAccessKeyId", Cmd.PersistentFlags().Lookup("aws-access-key-id"))
-	_ = viper.BindPFlag("awsSecretAccessKey", Cmd.PersistentFlags().Lookup("aws-secret-access-key"))
-
-	_ = viper.BindEnv("awsRegion", "AWS_REGION")
-	_ = viper.BindEnv("awsAccessKeyId", "AWS_ACCESS_KEY_ID")
-	_ = viper.BindEnv("awsSecretAccessKey", "AWS_SECRET_ACCESS_KEY")
-
-	if err := Cmd.MarkPersistentFlagRequired("aws-region"); err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 }

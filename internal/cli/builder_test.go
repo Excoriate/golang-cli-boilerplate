@@ -3,9 +3,9 @@ package cli
 import (
 	"testing"
 
-	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
-
 	"github.com/Excoriate/golang-cli-boilerplate/internal/config"
+
+	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/o11y"
 	"github.com/stretchr/testify/assert"
@@ -16,11 +16,13 @@ func TestWithScannedEnvVarsFromHost(t *testing.T) {
 		initOptions: InitOptions{
 			ScanEnvVarsFromHost: true,
 		},
-		logger: o11y.NewLogger(),
-		cfg:    &config.Cfg{},
+		logger: o11y.NewLogger(o11y.LoggerOptions{
+			WriteToStdout: true,
+		}),
 		cliApp: &types.App{
 			EnvVars: types.EnvVars{},
 		},
+		cfg: &config.Cfg{},
 	}
 
 	t.Run("Success", func(t *testing.T) {
