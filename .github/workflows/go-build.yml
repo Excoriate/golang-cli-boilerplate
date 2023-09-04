@@ -30,7 +30,6 @@ jobs:
           go-version: ~1.20
       - name: Build for ${{ matrix.goos }}/${{ matrix.goarch }}
         run: |
-          go mod tidy
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/ ./...
   build-supported-go-version:
     name: Go Build Versions
@@ -48,5 +47,4 @@ jobs:
           go-version: ${{ matrix.go-versions }}
       - name: Build for ${{ matrix.go-versions }}
         run: |
-          go mod tidy
           go build -o bin/ ./...
