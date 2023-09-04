@@ -34,8 +34,6 @@
 # Mac
 .DS_Store
 
-stiletto
-
 # Node related files
 node_modules/
 npm-debug.log

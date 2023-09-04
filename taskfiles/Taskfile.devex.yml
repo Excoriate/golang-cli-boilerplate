@@ -7,7 +7,7 @@ tasks:
       Generate a new .env file for a local AWS configuration, configured with AWS credentials stored in a ~/.aws/credentials file
 
     cmds:
-      - ./DevEx/scripts/env/generate-env-aws.sh
+      - ./DevEx/scripts/env/generate-env-example.sh
   gen-env-terraform:
     desc: >
       Generate a new .env file for a local Terraform configuration, configured with AWS credentials stored in a ~/.aws/credentials file

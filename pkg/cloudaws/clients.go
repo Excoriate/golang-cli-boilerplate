@@ -12,8 +12,11 @@ import (
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/errs"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
 type InitAWSAdapterOptions struct {
@@ -36,8 +39,12 @@ type AWSAdapter struct {
 	// Add clients here.
 	ECSClient            *ecs.Client
 	ECRClient            *ecr.Client
+	S3Client             *s3.Client
+	DynamoDBClient       *dynamodb.Client
 	CloudWatchLogsClient *cloudwatchlogs.Client
-	Logger               o11y.LoggerInterface
+	SecretsManagerClient *secretsmanager.Client
+	// Add general purpose logger.
+	Logger o11y.LoggerInterface
 }
 
 type Builder struct {
@@ -50,7 +57,10 @@ type Builder struct {
 	// Clients.
 	ecsClient            *ecs.Client
 	ecrClient            *ecr.Client
+	s3Client             *s3.Client
+	dynamoDbClient       *dynamodb.Client
 	cloudWatchLogsClient *cloudwatchlogs.Client
+	secretsManagerClient *secretsmanager.Client
 }
 
 func (b *Builder) Build(optFns ...func(*InitAWSAdapterOptions) error) (*AWSAdapter, error) {
@@ -71,7 +81,10 @@ func (b *Builder) Build(optFns ...func(*InitAWSAdapterOptions) error) (*AWSAdapt
 	// Clients built
 	adapter.ECSClient = b.ecsClient
 	adapter.ECRClient = b.ecrClient
+	adapter.S3Client = b.s3Client
+	adapter.DynamoDBClient = b.dynamoDbClient
 	adapter.CloudWatchLogsClient = b.cloudWatchLogsClient
+	adapter.SecretsManagerClient = b.secretsManagerClient
 
 	return &adapter, nil
 }
@@ -101,6 +114,30 @@ func (b *Builder) WithCloudWatchLogs() func(*InitAWSAdapterOptions) error {
 	return func(options *InitAWSAdapterOptions) error {
 		client := cloudwatchlogs.NewFromConfig(b.adapter)
 		b.cloudWatchLogsClient = client
+		return nil
+	}
+}
+
+func (b *Builder) WithS3() func(*InitAWSAdapterOptions) error {
+	return func(options *InitAWSAdapterOptions) error {
+		client := s3.NewFromConfig(b.adapter)
+		b.s3Client = client
+		return nil
+	}
+}
+
+func (b *Builder) WithDynamoDB() func(*InitAWSAdapterOptions) error {
+	return func(options *InitAWSAdapterOptions) error {
+		client := dynamodb.NewFromConfig(b.adapter)
+		b.dynamoDbClient = client
+		return nil
+	}
+}
+
+func (b *Builder) WithSecretsManager() func(*InitAWSAdapterOptions) error {
+	return func(options *InitAWSAdapterOptions) error {
+		client := secretsmanager.NewFromConfig(b.adapter)
+		b.secretsManagerClient = client
 		return nil
 	}
 }

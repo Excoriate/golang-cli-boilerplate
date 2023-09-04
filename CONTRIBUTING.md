@@ -1,19 +1,22 @@
-# Contribution Guidelines
+# Contributing to Golang CLI Boilerplate 🤝
 
-First and foremost, we'd like to express our gratitude to you for taking the time to contribute.
-We welcome and appreciate any and all contributions via
-[Pull Requests] along the [GitHub Flow].
+Thank you for your interest in contributing to our Golang CLI Boilerplate! Our CLI serves as a robust template built on top of Cobra and Viper, coming pre-packed with utilities and AWS adapters via Golang SDK v2. This document simplifies your journey to contribute to our open-source project.
 
-1. [Open a GitHub issue](#open-a-github-issue)
-2. [Fork the repository on GitHub](#fork-the-repository-on-github)
-3. [Install the pre-commit hooks](#install-the-pre-commit-hooks)
-4. [Update the documentation](#update-the-documentation)
-5. [Update the tests](#update-the-tests)
-6. [Update the code](#update-the-code)
-7. [Create a pull request](#create-a-pull-request)
-8. [Merge and release](#merge-and-release)
+## Pre-requisites 💼
 
-## Open a GitHub issue
+* Golang `1.20` or later
+* Docker, or a compatible container engine for building container images
+* Ensure you're installing [precommit](https://pre-commit.com/) hooks by running `task pre-commit-init`. This will install the pre-commit hooks in your local repository.
+* Optionally, you can install [Taskfile](https://taskfile.dev/#/) to run the tasks defined in the [Taskfile.yml](Taskfile.yml) file. However, all the Tasks within the `TaskFile.yml` are also available as Makefile targets.
+
+## Getting Started 🎬
+
+* Check our [open issues](https://github.com/Excoriate/golang-cli-boilerplate/issues).
+* Propose a new feature or bug fix by opening a new issue for discussion.
+* For beginners, look at issues labeled as [good first issue](https://github.com/Excoriate/golang-cli-boilerplate/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+Contributions are always welcome whether you have a new feature proposal, a bug fix, or even if you want to improve our documentation.
+### Open a GitHub issue
 
 For bug reports or requests, please submit your issue in the appropriate repository.
 
@@ -23,56 +26,91 @@ This is your chance to ask questions and receive feedback before
 writing (potentially wrong) code. We value the direct contact with our community
 a lot, so don't hesitate to ask any questions.
 
-## Fork the repository on GitHub
 
-[Fork] the repository into your own GitHub account and [create a new branch] as
-described in the [GitHub Flow].
+## Communication ⚡
 
-## Install the pre-commit hooks
+* 📧 [Email](mailto:alex_torres@outlook.com)
+* 🧳 [LinkedIn](https://www.linkedin.com/in/alextorresruiz/)
 
-If the repository you're working on ships with a
-[`.pre-commit-config.yaml`][pre-commit-file],
-make sure the necessary hooks have been installed before you begin working
-(e.g. a `pre-commit install`). Also, there's a `script` included in this repository that might help you with that. See [here](scripts/hooks/install-pre-commit-hooks-deps.sh).
+Feel free to introduce yourself and discuss any issue or feature proposal.
 
-## Update the documentation
+## How to Make a Contribution 🛠️
 
-We encourage you to update the documentation before writing any code (please see
-[Readme Driven Development](https://tom.preston-werner.com/2010/08/23/readme-driven-development.html). This ensures the
-documentation stays up to date and allows you to think through the problem fully before you begin implementing any
-changes.
+1. Fork the repo and create a new branch from `master`.
+2. Follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to make your changes self-explanatory.
+3. If you're working on an existing issue, please assign it to yourself. In case you're not a member of our organization, leave a comment to let us know.
+4. Ensure your Pull Request is up-to-date with the `master` branch and all checks are passing.
+5. Fill out the PR template, link the issue it addresses, and mark it as a draft until work is complete.
+6. After work is complete, request a review.
 
-## Update the tests
+## Semantic commits 📝
+We use [Semantic Commits](https://www.conventionalcommits.org/en/v1.0.0/) to make it easier to understand what a commit does and to build pretty changelogs. Please use the following prefixes for your commits:
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation changes
+- `chores`: Changes to the build process or auxiliary tools and libraries such as documentation generation
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `test`: Adding missing tests or correcting existing tests
+- `ci`: Changes to our CI configuration files and scripts
 
-We also recommend updating the automated tests before updating any code
-(see [Test Driven Development](https://en.wikipedia.org/wiki/Test-driven_development).
+An example for this could be:
+```
+git commit -m "docs: add a new section to the README"
+```
 
-That means that you should add or update a test case, run all tests and verify
-that the new test fails with a clear error message and then start implementing
-the code changes to get that test to pass.
+## Releasing 🏷️
+Releases are done using [Release Please](https://github.com/googleapis/release-please) and [GoReleaser](https://goreleaser.com/). The workflow looks like this:
 
-All the tests are located in the `tests` folder in every repository, and all of them are made using [Terratest](https://terratest.gruntwork.io/)
+* A PR is merged to the `main` branch:
+  * Release please is triggered, creates or updates a new release PR
+  * This is done with every merge to main, the current release PR is updated every time
 
-## Update the code
+* Merging the 'release please' PR to `main`:
+  * Release please is triggered, creates a new release and updates the changelog based on the commit messages
+  * GoReleaser is triggered, builds the binaries and attaches them to the release
+  * Containers are created and pushed to the container registry
 
-At this point, make your code changes and constantly test again your new test case to make sure that everything working
-properly. Do [commit] early and often and make useful commit messages.
+>**NOTE**: With the next relevant merge, a new release PR will be created and the process starts again
 
-If a backwards incompatible change cannot be avoided, please make sure to call that out when you submit a pull request,
-explaining why the change is absolutely necessary.
+## Building 🛠️
+Building the binary is as simple as running `go build .` in the root of the repository. If you want to build the container image, you can run `docker build -t golang-ci-boilerplate -f ./Dockerfile .` in the root of the repository or use any of the Makefile targets or Taskfile tasks.
+```bash
+# Build the binary
+go build .
 
-## Create a pull request
+# Build the container image
+docker build -t golang-ci-boilerplate -f ./Dockerfile .
 
-[Create a pull request] with your changes. For it, this repository includes a [pull request template](.github/PULL_REQUEST_TEMPLATE.md) that you can use to help you write a good description of your changes.
+# Build the binary and container image
+make build
+task cli-build
 
-## Merge and release
+# Build the docker container
+make docker-build
+task docker-build
+```
 
-The [CODEOWNERS](.github/CODEOWNERS) of the repository will review your code and provide feedback.
-If everything looks good, they will merge the code and release a new version while following the principles of [Semantic Versioning (SemVer)].
 
-<!-- References -->
+## Making a Pull Request 📝
 
-<!-- markdown-link-check-disable -->
-[Pull Requests]: https://github.com/mineiros-io/terraform-aws-dynamodb/pulls
-[pre-commit-file]: https://github.com/mineiros-io/terraform-aws-dynamodb/blob/master/.pre-commit-config.yaml
-<!-- markdown-link-check-enable -->
+1. Keep PRs focused and small. For multiple changes, create multiple PRs.
+2. Ensure your PR is up-to-date with the `main` branch and all checks are passing.
+3. Fill out the [PR template](.github/PULL_REQUEST_TEMPLATE.md) and link the issue it addresses.
+
+## Reviewing PRs 🕵️‍♀️
+
+1. Be constructive and assign yourself to the PR.
+2. Check if all checks are passing.
+3. If you are unsure about something, ask the author.
+4. Try out the changes to ensure they work as intended.
+5. Approve and merge the PR after ensuring it has all approvals and checks are passing.
+
+## Building The Project 💼
+
+You can build the project using `go build .` in the root of the repository, or if you want to create the container image, you can use `docker build -t golang-cli-boilerplate -f Dockerfile .` .
+
+## Releasing 🏷️
+
+We automate releases using [Release Please](https://github.com/googleapis/release-please) and [GoReleaser](https://goreleaser.com/). Your merged commits will automatically trigger this process.
+
+## Thank you for your interest in our project! 🙌

@@ -10,7 +10,7 @@ import (
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cliutils"
 
-	"github.com/Excoriate/golang-cli-boilerplate/cmd/aws"
+	"github.com/Excoriate/golang-cli-boilerplate/cmd/example"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,11 +24,16 @@ const CLIName = "golang-cli-boilerplate"
 var rootCmd = &cobra.Command{
 	Version: "v0.0.1",
 	Use:     CLIName,
-	Long: fmt.Sprintf(`%s is a cmd-line tool that helps you manage your ECS services, and,
-	related AWS infrastructure easily. It can be used in a stand-alone mode, or, as a
-	library in your Go projects.`, CLIName),
-	Example: fmt.Sprintf(`
-	  %s deploy --service=myservice --cluster=mycluster`, CLIName),
+	Example: cliutils.GenerateExampleInCMD([]cliutils.ExampleTemplateOptions{
+		{
+			CLIName: CLIName,
+			Command: "example",
+			Options: "--option1 --option2",
+			Title:   "Naming this example",
+			Explanation: "This is an example of how you can construct a nice and rich explanation" +
+				" for your commands.",
+		},
+	}),
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// Initialize the CLI client.
 		client, err := cli.New()
@@ -132,7 +137,7 @@ func addPersistentFlagsToRootCMD() {
 			},
 		},
 		{
-			LongName:                 "scan-aws-env-vars",
+			LongName:                 "scan-example-env-vars",
 			Usage:                    "Scan AWS specific environment variables from host",
 			FlagType:                 "bool",
 			DefaultValue:             false,
@@ -191,5 +196,5 @@ func initConfig() {
 func init() {
 	addPersistentFlagsToRootCMD()
 	cobra.OnInitialize(initConfig)
-	rootCmd.AddCommand(aws.Cmd)
+	rootCmd.AddCommand(example.Cmd)
 }

@@ -27,3 +27,25 @@ func MergeSlices(slices ...[]string) []string {
 	}
 	return merged
 }
+
+// WrapAtLength wraps the input paragraph at the specified length
+func WrapAtLength(input string, length int) string {
+	words := strings.Fields(input)
+	if len(words) == 0 {
+		return input
+	}
+
+	wrapped := ""
+	line := words[0]
+	for _, word := range words[1:] {
+		if len(line)+1+len(word) <= length {
+			line += " " + word
+		} else {
+			wrapped += "    " + line + "\n"
+			line = word
+		}
+	}
+	// Add the last line
+	wrapped += "    " + line
+	return wrapped
+}

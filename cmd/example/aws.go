@@ -1,4 +1,4 @@
-package aws
+package example
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var commandName = "aws"
+var commandName = "example"
 
 // GetClient returns the client instance from the context.
 func GetClient(cmd *cobra.Command) *cli.Client {
@@ -117,7 +117,7 @@ different type of actions on top of it.`, commandName),
 func addPersistentFlags() {
 	err := cliutils.AddFlags(Cmd, []cliutils.CobraFlagOptions{
 		{
-			LongName:     "aws-region",
+			LongName:     "example-region",
 			Usage:        "The AWS region to carry out operations in.",
 			IsPersistent: true,
 			IsRequired:   true, // It'll fail if the flag is not passed.
@@ -128,7 +128,7 @@ func addPersistentFlags() {
 			},
 		},
 		{
-			LongName:     "aws-access-key-id",
+			LongName:     "example-access-key-id",
 			Usage:        "The AWS Access Key ID. If it's not set, it'll be read from the AWS_ACCESS_KEY_ID environment variable.",
 			IsPersistent: true,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
@@ -138,7 +138,7 @@ func addPersistentFlags() {
 			},
 		},
 		{
-			LongName:     "aws-secret-access-key",
+			LongName:     "example-secret-access-key",
 			Usage:        "The AWS Secret Access Key. If it's not set, it'll be read from the AWS_SECRET_ACCESS_KEY environment variable.",
 			IsPersistent: true,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
