@@ -15,7 +15,8 @@ on:
 env:
   GO_VERSION: '~1.21'
 jobs:
-  test:
+  docker-linter-hadolint:
+    name: Docker Linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,15 +25,15 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: hadolint/hadolint-action@v3.1.0
-        name: Lint ARM Dockerfile
+        name: Lint arm Dockerfile
         id: hadolint-arm
         with:
-          dockerfile: arm.Dockerfile
+          dockerfile: container/arm.Dockerfile
       - uses: hadolint/hadolint-action@v3.1.0
         name: Lint linux arm64 Dockerfile
         id: hadolint-linux-arm64
         with:
-          dockerfile: Dockerfile
+          dockerfile: container/Dockerfile
       - name: Update Pull Request Comment
         uses: actions/github-script@v6
         id: update-comment-hadolint

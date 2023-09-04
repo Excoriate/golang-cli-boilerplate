@@ -4,6 +4,10 @@ This is a versatile and easy-to-use template for building a robust Golang CLI wi
 
 ---
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
+[![Docker Build](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-build.yml)
+[![Go Build](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-build.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-build.yml)
+[![Go linter](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-lint.yaml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-lint.yaml)
+[![Go unit tests](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-test.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-test.yml)
 
 ---
 ## Getting Started 🚦
