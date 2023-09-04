@@ -99,7 +99,7 @@ different type of actions on top of it.`, commandName),
 			data = append(data, []string{strconv.Itoa(i), cluster})
 		}
 
-		if err := out.Show(output.OutputOptions{
+		if err := out.Show(output.Options{
 			Data:         data,
 			OutputType:   option,
 			SaveInDisk:   save,

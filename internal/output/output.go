@@ -7,7 +7,7 @@ import (
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/tui"
 )
 
-type OutputOptions struct {
+type Options struct {
 	OutputType   string
 	Data         [][]string
 	Filename     string
@@ -15,13 +15,15 @@ type OutputOptions struct {
 	TableHeaders []string
 }
 
+const tableOutputType = "table"
+
 type TerminalOutput struct {
 	tw     tui.MessageWriter
 	logger o11y.LoggerInterface
 }
 
 type TerminalOutputWriter interface {
-	Show(options OutputOptions) error
+	Show(options Options) error
 }
 
 func NewTerminalOutput(tw tui.MessageWriter, l o11y.LoggerInterface) *TerminalOutput {
@@ -31,14 +33,14 @@ func NewTerminalOutput(tw tui.MessageWriter, l o11y.LoggerInterface) *TerminalOu
 	}
 }
 
-func (t *TerminalOutput) Show(options OutputOptions) error {
+func (t *TerminalOutput) Show(options Options) error {
 	if options.Data == nil {
 		t.logger.Error("failed to show terminal output, data is nil")
 		return fmt.Errorf("failed to show terminal output, data is nil")
 	}
 
 	if options.OutputType == "" {
-		options.OutputType = "table"
+		options.OutputType = tableOutputType
 	}
 
 	if options.SaveInDisk && options.Filename == "" {
@@ -46,7 +48,7 @@ func (t *TerminalOutput) Show(options OutputOptions) error {
 		return fmt.Errorf("failed to show terminal output, filename is empty but 'saveInDisk' is true")
 	}
 
-	if options.OutputType == "table" && len(options.TableHeaders) == 0 {
+	if options.OutputType == tableOutputType && len(options.TableHeaders) == 0 {
 		t.logger.Error("failed to show terminal output, table headers are empty")
 		return fmt.Errorf("failed to show terminal output, table headers are empty")
 	}
@@ -56,7 +58,7 @@ func (t *TerminalOutput) Show(options OutputOptions) error {
 	}
 
 	switch options.OutputType {
-	case "table":
+	case tableOutputType:
 		if err := tui.ShowTable(tui.TableOptions{
 			Headers: options.TableHeaders,
 			Data:    options.Data,

@@ -21,6 +21,12 @@ var (
 
 const CLIName = "golang-cli-boilerplate"
 
+type key int
+
+const (
+	clientKey key = iota
+)
+
 var rootCmd = &cobra.Command{
 	Version: "v0.0.1",
 	Use:     CLIName,
@@ -41,7 +47,7 @@ var rootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		ctx := context.WithValue(context.Background(), "client", client)
+		ctx := context.WithValue(context.Background(), clientKey, client)
 		cmd.SetContext(ctx)
 	},
 	Run: func(cmd *cobra.Command, args []string) {

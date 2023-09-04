@@ -10,7 +10,7 @@ This is a versatile and easy-to-use template for building a robust Golang CLI wi
 Use this repository as a [GitHub Template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) to create your own CLI:
 
 - [ ] Clone this repository and start adding your command and flag definitions. Utilize pre-installed AWS adapters and included utilities to kickstart your CLI development.
-- [ ] This template's CLI is called `golang-cli-boilerplate`. You can rename it by changing the name using your favourite tool, or just using our IDE with a simple `Ctrl+Shift+R` and replace all the occurrences of `golang-cli-boilerplate` with your new name.
+- [ ] This template's CLI is called `golang-cli-boilerplate`. You can rename it by changing the name using your favourite tool, or just using our IDE with a simple `Ctrl+Shift+R` and replace all the occurrences of `golang-cli-boilerplate` with your new name (or including the org/`golang-cli-boilerplate`) if applicable.
 - [ ] Configure [PreCommit](https://pre-commit.com/) hooks by running `task pre-commit-init`. This will install the pre-commit hooks in your local repository.
 - [ ] Update the `LICENSE.md` file with your own license.
 - [ ] Verify that everything is working as expected:

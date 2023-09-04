@@ -58,7 +58,7 @@ type Builder struct {
 	ecsClient            *ecs.Client
 	ecrClient            *ecr.Client
 	s3Client             *s3.Client
-	dynamoDbClient       *dynamodb.Client
+	dynamoDBClient       *dynamodb.Client
 	cloudWatchLogsClient *cloudwatchlogs.Client
 	secretsManagerClient *secretsmanager.Client
 }
@@ -82,7 +82,7 @@ func (b *Builder) Build(optFns ...func(*InitAWSAdapterOptions) error) (*AWSAdapt
 	adapter.ECSClient = b.ecsClient
 	adapter.ECRClient = b.ecrClient
 	adapter.S3Client = b.s3Client
-	adapter.DynamoDBClient = b.dynamoDbClient
+	adapter.DynamoDBClient = b.dynamoDBClient
 	adapter.CloudWatchLogsClient = b.cloudWatchLogsClient
 	adapter.SecretsManagerClient = b.secretsManagerClient
 
@@ -129,7 +129,7 @@ func (b *Builder) WithS3() func(*InitAWSAdapterOptions) error {
 func (b *Builder) WithDynamoDB() func(*InitAWSAdapterOptions) error {
 	return func(options *InitAWSAdapterOptions) error {
 		client := dynamodb.NewFromConfig(b.adapter)
-		b.dynamoDbClient = client
+		b.dynamoDBClient = client
 		return nil
 	}
 }

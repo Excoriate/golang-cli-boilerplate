@@ -37,14 +37,14 @@ func (e *EnvVarManager) ScanDotEnvAndAttachEnvVars(dotEnvFile string,
 
 	dotEnvFilePath := filepath.Join(gitRepoDir, dotEnvFile)
 
-	if err := utils.FileExistAndItIsAFile(dotEnvFilePath); err != nil {
+	if fileErr := utils.FileExistAndItIsAFile(dotEnvFilePath); fileErr != nil {
 		return nil, fmt.Errorf("failed to get env vars from dot env file on path %s: %s",
-			dotEnvFilePath, err.Error())
+			dotEnvFilePath, fileErr.Error())
 	}
 
-	if err := utils.FileIsNotEmpty(dotEnvFilePath); err != nil {
+	if dotFileErr := utils.FileIsNotEmpty(dotEnvFilePath); dotFileErr != nil {
 		return nil, fmt.Errorf("failed to get env vars from dot env file on path %s: %s, file is empty",
-			dotEnvFilePath, err.Error())
+			dotEnvFilePath, dotFileErr.Error())
 	}
 
 	dotEnvVars, err := env.GetEnvVarsFromDotFile(env.DotEnvFileReadOpt{

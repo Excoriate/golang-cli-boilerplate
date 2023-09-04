@@ -81,6 +81,13 @@ issues:
     - linters:
         - gosec
       text: G306
+    # This is just a warning, not an error, and it's safe for the
+    # due to the 'root' command is adding a bunch of flags, and options
+    # but none of those or the length of the function is a problem, nor
+    # a cognitive-complexity issue. See the function: addPersistentFlagsToRootCMD()
+    - linters:
+        - funlen
+      path: cmd/root\.go
     - linters:
         - gosec
       text: G404
