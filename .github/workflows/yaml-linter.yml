@@ -1,5 +1,5 @@
 ---
-name: Yamllint GitHub Actions
+name: Yaml Linter
 on:
   workflow_dispatch:
   push:

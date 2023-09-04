@@ -3,11 +3,15 @@
 This is a versatile and easy-to-use template for building a robust Golang CLI with [Cobra](https://github.com/spf13/cobra) and [Viper](https://github.com/spf13/viper). It comes with built-in AWS adapters via Golang SDK v2 and handy utilities.
 
 ---
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md) [![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Excoriate/golang-cli-boilerplate)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=flat-square)](https://github.com/goreleaser)
 [![Docker Build](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-build.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-build.yml)
 [![Go Build](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-build.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-build.yml)
 [![Go linter](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-lint.yaml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-lint.yaml)
 [![Go unit tests](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-test.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/go-ci-test.yml)
+[![Lint Docker](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-hadolint.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/docker-hadolint.yml)
+[![Yamllint GitHub Actions](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/yaml-linter.yml/badge.svg)](https://github.com/Excoriate/golang-cli-boilerplate/actions/workflows/yaml-linter.yml)
 
 ---
 ## Getting Started 🚦
