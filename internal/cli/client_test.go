@@ -13,16 +13,16 @@ import (
 
 func TestWithScannedEnvVarsFromHost(t *testing.T) {
 	b := Builder{
-		initOptions: InitOptions{
+		initOptions: IniDefaultFlagOptions{
 			ScanEnvVarsFromHost: true,
 		},
 		logger: o11y.NewLogger(o11y.LoggerOptions{
 			WriteToStdout: true,
 		}),
-		cliApp: &types.App{
+		appCfg: &types.App{
 			EnvVars: types.EnvVars{},
 		},
-		cfg: &config.Cfg{},
+		envVarManager: &config.Cfg{},
 	}
 
 	t.Run("Success", func(t *testing.T) {
@@ -32,8 +32,8 @@ func TestWithScannedEnvVarsFromHost(t *testing.T) {
 		assert.True(t, b.initOptions.ScanEnvVarsFromHost, "The WithScannedEnvVarsFromHost should set the ScanEnvVarsFromHost to true")
 
 		// envVarsScanned
-		scannedEnvVars := b.cliApp.EnvVars
-		assert.NotNil(t, scannedEnvVars, "The WithScannedEnvVarsFromHost should set the EnvVars to a non-nil value")
-		assert.NotEmpty(t, scannedEnvVars, "The WithScannedEnvVarsFromHost should set the EnvVars to a non-empty value")
+		scannedEnvVars := b.appCfg.EnvVarsHost
+		assert.NotNil(t, scannedEnvVars, "The WithScannedEnvVarsFromHost should set the EnvVarsHost to a non-nil value")
+		assert.NotEmpty(t, scannedEnvVars, "The WithScannedEnvVarsFromHost should set the EnvVarsHost to a non-empty value")
 	})
 }

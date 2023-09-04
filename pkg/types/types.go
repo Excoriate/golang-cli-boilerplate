@@ -6,10 +6,3 @@ type EnvVar struct {
 	Key   string
 	Value string
 }
-
-type App struct {
-	EnvVars    EnvVars
-	CurrentDir string
-	HomeDir    string
-	IsGitDir   bool
-}

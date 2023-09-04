@@ -7,7 +7,7 @@ import (
 	"github.com/pterm/pterm/putils"
 )
 
-type UXTitler interface {
+type TitleWriter interface {
 	ShowTitle(title string)
 	ShowTitleAndDescription(title, description string)
 	ShowSubTitle(mainTitle, subtitle string)
@@ -39,6 +39,6 @@ func (t *Title) ShowSubTitle(title, subTitle string) {
 		Render()
 }
 
-func NewTitler() UXTitler {
+func NewTitleWriter() TitleWriter {
 	return &Title{}
 }

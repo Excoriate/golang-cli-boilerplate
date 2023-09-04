@@ -1,14 +1,14 @@
 package aws
 
 import (
-	"context"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cliutils"
 
-	"github.com/Excoriate/golang-cli-boilerplate/internal/sdout"
+	"github.com/Excoriate/golang-cli-boilerplate/internal/output"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cloudaws"
 
@@ -19,39 +19,32 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cliClient *cli.Client
+var commandName = "aws"
+
+// GetClient returns the client instance from the context.
+func GetClient(cmd *cobra.Command) *cli.Client {
+	ctx := cliutils.GetCMDContext(cmd, "client")
+	if ctx == nil {
+		log.Fatal("Unable to get the client context.")
+	}
+	client := ctx.(*cli.Client)
+	return client
+}
 
 var Cmd = &cobra.Command{
-	Version: "v0.0.1",
-	Use:     "aws",
-	Long: `The 'aws' command is used to deploy a service to ECS, or perform
-different type of actions on top of it.`,
+	Use: commandName,
+	Long: fmt.Sprintf(`The '%s' command is used to deploy a service to ECS, or perform
+different type of actions on top of it.`, commandName),
 
 	Example: `
 	  ecs-deployer service deploy --service=myservice --cluster=mycluster
 	  ecs-deployer service scale --service=myservice --cluster=mycluster --desired-count=2
 `,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		// Initialize the CLI client.
-		cliInit := cli.New(context.TODO(), cli.InitOptions{
-			DotEnvFile:          viper.GetString("dotEnvFile"),
-			ScanEnvVarsFromHost: viper.GetBool("scanEnvVarsFromHost"),
-			ShowEnvVars:         viper.GetBool("showEnvVars"),
-		})
-
-		// Build the CLI client.
-		cliClientCpy, err := cliInit.Build(cliInit.WithScannedEnvVarsFromHost(),
-			cliInit.WithPrintedHostEnvVars(), cliInit.WithDotEnvFile())
-
-		if err != nil {
-			os.Exit(1)
-		}
-
-		cliClient = cliClientCpy
-	},
 	Run: func(cmd *cobra.Command, args []string) {
-		cliClient.UX.Titles.ShowTitle(viper.GetString("CLI_NAME_TITLE"))
-		cliClient.UX.Messages.ShowInfo(tui.MessageOptions{
+		client := GetClient(cmd)
+
+		client.UX.Titles.ShowTitle(viper.GetString("CLI_NAME_TITLE"))
+		client.UX.Messages.ShowInfo(tui.MessageOptions{
 			Message: "CLI successfully started. Configuration loaded successfully.",
 		})
 
@@ -61,7 +54,7 @@ different type of actions on top of it.`,
 		awsRegionPassed := viper.GetString("awsRegion")
 
 		// Instantiating client.
-		aws, err := cloudaws.NewClient(cliClient.Ctx, cliClient.Logger, cloudaws.InitAWSAdapterOptions{
+		aws, err := cloudaws.NewClient(client.Ctx, client.Logger, cloudaws.InitAWSAdapterOptions{
 			Region: awsRegionPassed,
 			Creds: cloudaws.AWSCreds{
 				AccessKeyID:     awsAccessKeyPassed,
@@ -70,7 +63,7 @@ different type of actions on top of it.`,
 		})
 
 		if err != nil {
-			cliClient.UX.Messages.ShowError(tui.MessageOptions{
+			client.UX.Messages.ShowError(tui.MessageOptions{
 				Message: err.Error(),
 			})
 			os.Exit(1)
@@ -78,14 +71,14 @@ different type of actions on top of it.`,
 
 		adapter, err := aws.Build(aws.WithECS())
 		if err != nil {
-			cliClient.UX.Messages.ShowError(tui.MessageOptions{
+			client.UX.Messages.ShowError(tui.MessageOptions{
 				Message: err.Error(),
 			})
 			os.Exit(1)
 		}
 
 		// Connector instantiation.j
-		ecsConnector := cloudaws.NewECSConnector(cliClient.Ctx, adapter.ECSClient, cliClient.Logger)
+		ecsConnector := cloudaws.NewECSConnector(client.Ctx, adapter.ECSClient, client.Logger)
 
 		// List ECS clusters.
 		result, _ := ecsConnector.ListECSClusters()
@@ -93,14 +86,6 @@ different type of actions on top of it.`,
 		// Checking if the output option (-o or --output) was passed.
 		option := viper.GetString("output")
 		save := viper.GetBool("save")
-		if option == "" {
-			option = "table"
-		}
-
-		// if option is yaml or yml, it's equivalent. So, always set yaml
-		if option == "yaml" {
-			option = "yml"
-		}
 
 		clusters := struct {
 			ClusterArns []string `json:"clusterArns" yaml:"clusterArns"`
@@ -108,49 +93,23 @@ different type of actions on top of it.`,
 
 		clusters.ClusterArns = append(clusters.ClusterArns, result.ClusterArns...)
 
-		switch option {
-		case "table":
-			// Show table.
-			headers := []string{"#", "CLUSTER"}
-			var data [][]string
-			for i, cluster := range result.ClusterArns {
-				data = append(data, []string{strconv.Itoa(i), cluster})
-			}
-
-			_ = tui.ShowTable(tui.TableOptions{
-				Headers: headers,
-				Data:    data,
-			})
-		case "yml":
-			if err := sdout.ShowYAML(sdout.StOutOptions{
-				Data:       clusters,
-				SaveInDisk: save,
-				Filename:   "ecs-clusters.yml",
-			}); err != nil {
-				cliClient.UX.Messages.ShowError(tui.MessageOptions{
-					Message: err.Error(),
-				})
-				os.Exit(1)
-			}
-
-		case "json":
-			if err := sdout.ShowJSON(sdout.StOutOptions{
-				Data:       clusters,
-				SaveInDisk: save,
-				Filename:   "ecs-clusters.json",
-			}); err != nil {
-				cliClient.UX.Messages.ShowError(tui.MessageOptions{
-					Message: err.Error(),
-				})
-				os.Exit(1)
-			}
+		out := output.NewTerminalOutput(client.UX.Messages, client.Logger)
+		var data [][]string
+		for i, cluster := range result.ClusterArns {
+			data = append(data, []string{strconv.Itoa(i), cluster})
 		}
 
-		if save {
-			// Convert the struct to an array of bytes []byte
-			cliClient.UX.Messages.ShowInfo(tui.MessageOptions{
-				Message: "File ecs-clusters successfully saved.",
+		if err := out.Show(output.OutputOptions{
+			Data:         data,
+			OutputType:   option,
+			SaveInDisk:   save,
+			Filename:     "ecs-clusters",
+			TableHeaders: []string{"#", "CLUSTER"},
+		}); err != nil {
+			client.UX.Messages.ShowError(tui.MessageOptions{
+				Message: err.Error(),
 			})
+			os.Exit(1)
 		}
 	},
 }

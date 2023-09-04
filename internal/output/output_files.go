@@ -1,4 +1,4 @@
-package sdout
+package output
 
 import (
 	"fmt"

@@ -13,7 +13,8 @@ type CobraFlagOptions struct {
 	ShortName                string
 	LongName                 string
 	Usage                    string
-	DefaultValue             string
+	DefaultValue             interface{}
+	FlagType                 string
 	FailIfEnvVarBindingFails bool
 	IsPersistent             bool
 	ViperBindingCfg          CobraViperBindingOptions
@@ -29,12 +30,57 @@ type CobraViperBindingOptions struct {
 func AddFlags(cmd *cobra.Command, flags []CobraFlagOptions) error {
 	for _, option := range flags {
 		var flag *pflag.Flag
-		if option.IsPersistent {
-			cmd.PersistentFlags().StringP(option.LongName, option.ShortName, option.DefaultValue, option.Usage)
-			flag = cmd.PersistentFlags().Lookup(option.LongName)
-		} else {
-			cmd.Flags().StringP(option.LongName, option.ShortName, option.DefaultValue, option.Usage)
-			flag = cmd.Flags().Lookup(option.LongName)
+		if option.FlagType == "" {
+			option.FlagType = "string"
+		}
+
+		switch option.FlagType {
+		case "string":
+			if option.DefaultValue == nil {
+				option.DefaultValue = ""
+			}
+			if option.IsPersistent {
+				cmd.PersistentFlags().StringP(option.LongName, option.ShortName, option.DefaultValue.(string), option.Usage)
+				flag = cmd.PersistentFlags().Lookup(option.LongName)
+			} else {
+				cmd.Flags().StringP(option.LongName, option.ShortName, option.DefaultValue.(string), option.Usage)
+				flag = cmd.Flags().Lookup(option.LongName)
+			}
+		case "bool":
+			if option.DefaultValue == nil {
+				option.DefaultValue = false
+			}
+			if option.IsPersistent {
+				cmd.PersistentFlags().BoolP(option.LongName, option.ShortName, option.DefaultValue.(bool), option.Usage)
+				flag = cmd.PersistentFlags().Lookup(option.LongName)
+			} else {
+				cmd.Flags().BoolP(option.LongName, option.ShortName, option.DefaultValue.(bool), option.Usage)
+				flag = cmd.Flags().Lookup(option.LongName)
+			}
+		case "int":
+			if option.DefaultValue == nil {
+				option.DefaultValue = 0
+			}
+			if option.IsPersistent {
+				cmd.PersistentFlags().IntP(option.LongName, option.ShortName, option.DefaultValue.(int), option.Usage)
+				flag = cmd.PersistentFlags().Lookup(option.LongName)
+			} else {
+				cmd.Flags().IntP(option.LongName, option.ShortName, option.DefaultValue.(int), option.Usage)
+				flag = cmd.Flags().Lookup(option.LongName)
+			}
+		case "map":
+			if option.DefaultValue == nil {
+				option.DefaultValue = make(map[string]string)
+			}
+			if option.IsPersistent {
+				cmd.PersistentFlags().StringToStringP(option.LongName, option.ShortName, option.DefaultValue.(map[string]string), option.Usage)
+				flag = cmd.PersistentFlags().Lookup(option.LongName)
+			} else {
+				cmd.Flags().StringToStringP(option.LongName, option.ShortName, option.DefaultValue.(map[string]string), option.Usage)
+				flag = cmd.Flags().Lookup(option.LongName)
+			}
+		default:
+			return fmt.Errorf("unsupported flag type %s", option.FlagType)
 		}
 
 		if option.ViperBindingCfg.IsEnabled {

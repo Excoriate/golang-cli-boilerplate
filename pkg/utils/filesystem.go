@@ -72,3 +72,13 @@ func WriteFileWithContent(filename string, content []byte) error {
 
 	return nil
 }
+
+func GetHomeDir() string {
+	homeDir, _ := os.UserHomeDir()
+	return homeDir
+}
+
+func GetCurrentDir() string {
+	currentDir, _ := os.Getwd()
+	return currentDir
+}

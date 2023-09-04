@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/Excoriate/golang-cli-boilerplate/internal/cli"
+
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/cliutils"
 
 	"github.com/Excoriate/golang-cli-boilerplate/cmd/aws"
@@ -25,8 +27,18 @@ var rootCmd = &cobra.Command{
 	Long: fmt.Sprintf(`%s is a cmd-line tool that helps you manage your ECS services, and,
 	related AWS infrastructure easily. It can be used in a stand-alone mode, or, as a
 	library in your Go projects.`, CLIName),
-	Example: `
-	  ecs-deployer deploy --service=myservice --cluster=mycluster`,
+	Example: fmt.Sprintf(`
+	  %s deploy --service=myservice --cluster=mycluster`, CLIName),
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		// Initialize the CLI client.
+		client, err := cli.New()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx := context.WithValue(context.Background(), "client", client)
+		cmd.SetContext(ctx)
+	},
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
@@ -45,7 +57,8 @@ func addPersistentFlagsToRootCMD() {
 			ShortName:                "d",
 			LongName:                 "debug",
 			Usage:                    "Enable debug mode",
-			DefaultValue:             "false",
+			FlagType:                 "bool",
+			DefaultValue:             false,
 			IsPersistent:             true,
 			FailIfEnvVarBindingFails: false,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
@@ -70,7 +83,8 @@ func addPersistentFlagsToRootCMD() {
 		{
 			LongName:                 "show-env-vars",
 			Usage:                    "Show environment variables",
-			DefaultValue:             "false",
+			FlagType:                 "bool",
+			DefaultValue:             false,
 			IsPersistent:             true,
 			FailIfEnvVarBindingFails: false,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
@@ -94,12 +108,39 @@ func addPersistentFlagsToRootCMD() {
 		{
 			LongName:                 "scan-env-vars-from-host",
 			Usage:                    "Scan environment variables from host",
-			DefaultValue:             "false",
+			FlagType:                 "bool",
+			DefaultValue:             false,
 			IsPersistent:             true,
 			FailIfEnvVarBindingFails: false,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
 				EnvVariableNameInViper: "scanEnvVarsFromHost",
 				EnvVariableNameInHost:  "SCAN_ENV_VARS_FROM_HOST",
+				IsEnabled:              true,
+			},
+		},
+		{
+			LongName:                 "scan-terraform-env-vars",
+			Usage:                    "Scan Terraform specific environment variables from host",
+			FlagType:                 "bool",
+			DefaultValue:             false,
+			IsPersistent:             true,
+			FailIfEnvVarBindingFails: false,
+			ViperBindingCfg: cliutils.CobraViperBindingOptions{
+				EnvVariableNameInViper: "scanTerraformEnvVarsFromHost",
+				EnvVariableNameInHost:  "SCAN_TERRAFORM_ENV_VARS_FROM_HOST",
+				IsEnabled:              true,
+			},
+		},
+		{
+			LongName:                 "scan-aws-env-vars",
+			Usage:                    "Scan AWS specific environment variables from host",
+			FlagType:                 "bool",
+			DefaultValue:             false,
+			IsPersistent:             true,
+			FailIfEnvVarBindingFails: false,
+			ViperBindingCfg: cliutils.CobraViperBindingOptions{
+				EnvVariableNameInViper: "scanAWSEnvVarsFromHost",
+				EnvVariableNameInHost:  "SCAN_AWS_ENV_VARS_FROM_HOST",
 				IsEnabled:              true,
 			},
 		},
@@ -120,7 +161,8 @@ func addPersistentFlagsToRootCMD() {
 			ShortName:                "s",
 			LongName:                 "save",
 			Usage:                    "Save output to file. If not provided, it defaults to stdout.",
-			DefaultValue:             "false",
+			FlagType:                 "bool",
+			DefaultValue:             false,
 			IsPersistent:             true,
 			FailIfEnvVarBindingFails: false,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{

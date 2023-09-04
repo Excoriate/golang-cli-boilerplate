@@ -6,7 +6,7 @@ import (
 	"github.com/pterm/pterm"
 )
 
-type UXMessage interface {
+type MessageWriter interface {
 	ShowError(opt MessageOptions)
 	ShowInfo(opt MessageOptions)
 	ShowSuccess(opt MessageOptions)
@@ -77,6 +77,6 @@ func (t *Message) ShowWarning(opt MessageOptions) {
 	pterm.Warning.Println(opt.Message)
 }
 
-func NewMessage() UXMessage {
+func NewMessageWriter() MessageWriter {
 	return &Message{}
 }
