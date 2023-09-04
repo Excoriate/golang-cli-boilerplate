@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
   pull_request:
+env:
+  GO_VERSION: ~1.20
 jobs:
   docker-build:
     name: Docker build

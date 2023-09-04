@@ -1,7 +1,7 @@
 ---
 repository:
   name: golang-cli-boilerplate
-  description: ECS Deployer is a CLI tool for deploying Containers to AWS ECS.
+  description: Golang CLI Boilerplate is a bulletproof Golang CLI template with batteries included 🔋
   topics: example, devops, tooling, ecs, sre, cli
   default_branch: main
   allow_squash_merge: true
