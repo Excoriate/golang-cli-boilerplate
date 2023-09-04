@@ -12,7 +12,7 @@ jobs:
     name: Golangci-lint
     runs-on: ubuntu-latest
     env:
-      GO_VERSION: '~1.20'
+      GO_VERSION: '~1.21'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Go
