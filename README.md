@@ -113,6 +113,25 @@ For more details about the document templates, see [this](docs/about_docs.md).
 * Out-of-the-box [GitHub Actions](https://docs.github.com/en/actions) workflows for CI/CD 🚀
 * Built-in [PreCommit](https://pre-commit.com/) hooks for linting and formatting 🧹
 * Out-of-the-box support for output data in `yaml`, `json` or `tables`🤖
+
+### Safely share the `cliClient` to `subCommands` 🤝
+On each subcommand (at the parent level, which means, those that are in the top of your `pkg`), ensure you're implementing the `GetClient` function:
+```go
+func GetClient(cmd *cobra.Command) *cli.Client {
+	ctx := cmd.Context().Value(cliutils.GetCtxKey())
+	if ctx == nil {
+		log.Fatal("Unable to get the client context.")
+	}
+	client, ok := ctx.(*cli.Client)
+	if !ok {
+		log.Fatal("Unable to assert client.")
+	}
+	return client
+}
+```
+### Adapters 🧩
+Adapters are known also as `clients`. They can plug into the `cliClient` and provide additional functionality. This template includes a subcommand called `aws-ecs` in the `cmd/example` package. It's a subcommand that use the `aws` adapter to read the `ECS` clusters in your account. It's a good example of how to use the `cliClient` and the `aws` adapter. See [here](https://github.com/Excoriate/golang-cli-boilerplate/blob/4caff5eade39799fb3945e52d14f937251233e9a/cmd/example/aws.go#L68-L68)
+
 ---
 
 ## Tooling 🧑‍🔧

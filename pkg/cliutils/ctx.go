@@ -7,3 +7,13 @@ func GetCMDContext(c *cobra.Command, key string) interface{} {
 	ctx := c.Context().Value(key)
 	return ctx
 }
+
+type Key int
+
+const (
+	clientKey Key = iota
+)
+
+func GetCtxKey() Key {
+	return clientKey
+}

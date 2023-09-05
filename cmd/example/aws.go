@@ -19,15 +19,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-var commandName = "example"
+var commandName = "aws-ecs"
+
+// GetClient returns the client instance from the context.
+// Update GetClient Function as below
 
 // GetClient returns the client instance from the context.
 func GetClient(cmd *cobra.Command) *cli.Client {
-	ctx := cliutils.GetCMDContext(cmd, "client")
+	ctx := cmd.Context().Value(cliutils.GetCtxKey())
 	if ctx == nil {
 		log.Fatal("Unable to get the client context.")
 	}
-	client := ctx.(*cli.Client)
+	client, ok := ctx.(*cli.Client)
+	if !ok {
+		log.Fatal("Unable to assert client.")
+	}
 	return client
 }
 
@@ -35,11 +41,16 @@ var Cmd = &cobra.Command{
 	Use: commandName,
 	Long: fmt.Sprintf(`The '%s' command is used to deploy a service to ECS, or perform
 different type of actions on top of it.`, commandName),
+	Example: cliutils.GenerateExampleInCMD([]cliutils.ExampleTemplateOptions{
+		{
+			CLIName: "golang-cli-boilerplate",
+			Command: commandName,
+			Options: "--aws-region=us-east-1 --output=yaml --save",
+			Explanation: `This command will list all the ECS clusters in the us-east-1 region,
+and it'll save the output in a file called ecs-clusters.yaml.`,
+		},
+	}),
 
-	Example: `
-	  ecs-deployer service deploy --service=myservice --cluster=mycluster
-	  ecs-deployer service scale --service=myservice --cluster=mycluster --desired-count=2
-`,
 	Run: func(cmd *cobra.Command, args []string) {
 		client := GetClient(cmd)
 
@@ -117,7 +128,7 @@ different type of actions on top of it.`, commandName),
 func addPersistentFlags() {
 	err := cliutils.AddFlags(Cmd, []cliutils.CobraFlagOptions{
 		{
-			LongName:     "example-region",
+			LongName:     "aws-region",
 			Usage:        "The AWS region to carry out operations in.",
 			IsPersistent: true,
 			IsRequired:   true, // It'll fail if the flag is not passed.
@@ -128,7 +139,7 @@ func addPersistentFlags() {
 			},
 		},
 		{
-			LongName:     "example-access-key-id",
+			LongName:     "aws-access-key-id",
 			Usage:        "The AWS Access Key ID. If it's not set, it'll be read from the AWS_ACCESS_KEY_ID environment variable.",
 			IsPersistent: true,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
@@ -138,7 +149,7 @@ func addPersistentFlags() {
 			},
 		},
 		{
-			LongName:     "example-secret-access-key",
+			LongName:     "aws-secret-access-key",
 			Usage:        "The AWS Secret Access Key. If it's not set, it'll be read from the AWS_SECRET_ACCESS_KEY environment variable.",
 			IsPersistent: true,
 			ViperBindingCfg: cliutils.CobraViperBindingOptions{
