@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.2](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.1...v1.0.2) (2023-09-05)
+
+
+### Bug Fixes
+
+* fix missing ctx by invalid key, enhanced aws-ecs command as example, add extra workflows ([f0b9c6a](https://github.com/Excoriate/golang-cli-boilerplate/commit/f0b9c6a25f667dde11c0f1fcc330e0baebb1a289))
+
+
+### Other
+
+* add exclusion in yamllint for lock.yml workflow ([42b7228](https://github.com/Excoriate/golang-cli-boilerplate/commit/42b7228cfedf67c0f73dc3f0e4200e0779163a2c))
+
 ## [1.0.1](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.0...v1.0.1) (2023-09-05)
 
 
