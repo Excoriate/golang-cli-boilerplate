@@ -6,7 +6,7 @@ The CLI golang-cli-boilerplate provides binary distributions for every release w
 3. Extract the archive.
 4. Move the `golang-cli-boilerplate` binary into your `$PATH`.
 
-Or, based on your OS. For MacOS, you can use [Homebrew](https://brew.sh/):
+Or, based on your OS. For Mac, you can use [Homebrew](https://brew.sh/):
 
 ```bash
 brew tap Excoriate/homebrew-tap https://github.com/Excoriate/homebrew-tap.git

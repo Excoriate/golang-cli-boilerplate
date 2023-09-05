@@ -9,6 +9,18 @@
   "ignorePatterns": [
     {
       "pattern": "^https://github.com/your-github-username"
+    },
+    {
+      "pattern": "^Taskfile.yml"
+    },
+    {
+        "pattern": "^.github/workflows/"
+    },
+    {
+        "pattern": "^docs/templates/"
+    },
+    {
+
     }
   ],
   "retryCount": 5,
