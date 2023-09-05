@@ -4,6 +4,7 @@ ignore: |
   /.github/METADATA.yaml
   /dist/**
   /.github/stale.yml
+  /.github/workflows/lock.yml
   /.github/config.yml
   /.github/dependabot.yml
   /taskfiles/Taskfile.devex.yml
