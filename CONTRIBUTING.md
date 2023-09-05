@@ -7,7 +7,7 @@ Thank you for your interest in contributing to our Golang CLI Boilerplate! Our C
 * Golang `1.20` or later
 * Docker, or a compatible container engine for building container images
 * Ensure you're installing [precommit](https://pre-commit.com/) hooks by running `task pre-commit-init`. This will install the pre-commit hooks in your local repository.
-* Optionally, you can install [Taskfile](https://taskfile.dev/#/) to run the tasks defined in the [Taskfile.yml](Taskfile.yml) file. However, all the Tasks within the `TaskFile.yml` are also available as Makefile targets.
+* Optionally, you can install [Taskfile](https://taskfile.dev/#/) to run the tasks defined in the [Taskfile.yml](./TaskFile.yml) file. However, all the Tasks within the `TaskFile.yml` are also available as Makefile targets.
 
 ## Getting Started 🎬
 

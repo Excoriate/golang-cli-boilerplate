@@ -2,9 +2,15 @@
   "aliveStatusCodes": [
     200,
     206,
-    503
+    503,
+    999
   ],
   "fallbackRetryDelay": "30s",
+  "ignorePatterns": [
+    {
+      "pattern": "^https://github.com/your-github-username"
+    }
+  ],
   "retryCount": 5,
   "retryOn429": true
 }
