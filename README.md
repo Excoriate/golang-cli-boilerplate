@@ -109,6 +109,10 @@ For more details about the document templates, see [this](docs/about_docs.md).
 * Import env vars from dotfiles (`.env`) 📄
 * Leverages built-in AWS adapters ([Golang SDK v2](https://aws.github.io/aws-sdk-go-v2/))
 * Ready-to-use utilities for common tasks 🧰. See the [pkg](pkg) folder for more details.
+* Built-in [Docker](https://www.docker.com/) support 🐳
+* Out-of-the-box [GitHub Actions](https://docs.github.com/en/actions) workflows for CI/CD 🚀
+* Built-in [PreCommit](https://pre-commit.com/) hooks for linting and formatting 🧹
+* Out-of-the-box support for output data in `yaml`, `json` or `tables`🤖
 ---
 
 ## Tooling 🧑‍🔧
