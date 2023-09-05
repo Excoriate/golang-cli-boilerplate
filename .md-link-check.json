@@ -14,14 +14,12 @@
       "pattern": "^Taskfile.yml"
     },
     {
-        "pattern": "^.github/workflows/"
+      "pattern": "^.github/workflows/"
     },
     {
-        "pattern": "^docs/templates/"
+      "pattern": "^docs/templates/"
     },
-    {
-
-    }
+    {}
   ],
   "retryCount": 5,
   "retryOn429": true
