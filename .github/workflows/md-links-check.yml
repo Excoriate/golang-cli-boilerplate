@@ -17,7 +17,7 @@ jobs:
         with:
           PATTERNS: |
             **/**.md
-      - uses: creachadair/github-action-markdown-link-check@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           check-modified-files-only: 'yes'
           config-file: '.md-link-check.json'
@@ -27,6 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: creachadair/github-action-markdown-link-check@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
         with:
           config-file: '.md-link-check.json'
