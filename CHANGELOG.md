@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.0...v1.0.1) (2023-09-05)
+
+
+### Other
+
+* fix broken links in markdown ([14b55dd](https://github.com/Excoriate/golang-cli-boilerplate/commit/14b55dde133519d11f1de57887cc6aeda7aeb17f))
+* fix broken links in markdown ([af1cdb8](https://github.com/Excoriate/golang-cli-boilerplate/commit/af1cdb84d01118ab395b05e23fecaff8df756bbc))
+
 ## 1.0.0 (2023-09-04)
 
 
