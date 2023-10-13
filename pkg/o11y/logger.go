@@ -1,137 +1,86 @@
 package o11y
 
 import (
+	"log/slog"
 	"os"
-
-	"github.com/Excoriate/golang-cli-boilerplate/pkg/env"
-	"github.com/pterm/pterm"
 )
 
-var defaultLogger = pterm.DefaultLogger.
-	WithFormatter(pterm.LogFormatterJSON)
+type LoggerInterface interface {
+	Info(msg string, args ...any)
+	Warn(msg string, args ...any)
+	Error(msg string, args ...any)
+	Debug(msg string, args ...any)
+}
 
 type LoggerOptions struct {
-	RegisterCallerFunction bool
-	WriteToStdout          bool
-}
-
-type LoggerArg struct {
-	Key   string
-	Value interface{}
-}
-
-type LoggerInterface interface {
-	Trace(msg string, args ...LoggerArg)
-	Debug(msg string, args ...LoggerArg)
-	Info(msg string, args ...LoggerArg)
-	Warn(msg string, args ...LoggerArg)
-	Error(msg string, args ...LoggerArg)
-	Fatal(msg string, args ...LoggerArg)
-	Args(args ...LoggerArg) []pterm.LoggerArgument
+	EnableJSONHandler bool
+	EnableStdError    bool
 }
 
 type LogImpl struct {
-	impl *pterm.Logger
+	impl *slog.Logger
 }
 
-func (l *LogImpl) Fatal(msg string, args ...LoggerArg) {
-	if len(args) == 0 {
-		l.impl.Fatal(msg)
-		return
-	}
-	l.impl.Fatal(msg, l.Args(args...))
-}
-
-func (l *LogImpl) Error(msg string, args ...LoggerArg) {
-	if len(args) == 0 {
-		l.impl.Error(msg)
-		return
-	}
-	l.impl.Error(msg, l.Args(args...))
-}
-
-func (l *LogImpl) Trace(msg string, args ...LoggerArg) {
-	if len(args) == 0 {
-		l.impl.Trace(msg)
-		return
-	}
-	l.impl.Trace(msg, l.Args(args...))
-}
-
-func (l *LogImpl) Debug(msg string, args ...LoggerArg) {
-	if len(args) == 0 {
-		l.impl.Debug(msg)
-		return
-	}
-	l.impl.Debug(msg, l.Args(args...))
-}
-
-func (l *LogImpl) Info(msg string, args ...LoggerArg) {
+func (l *LogImpl) Info(msg string, args ...any) {
 	if len(args) == 0 {
 		l.impl.Info(msg)
 		return
 	}
-	l.impl.Info(msg, l.Args(args...))
+
+	l.impl.Info(msg, args...)
 }
 
-func (l *LogImpl) Warn(msg string, args ...LoggerArg) {
+func (l *LogImpl) Warn(msg string, args ...any) {
 	if len(args) == 0 {
 		l.impl.Warn(msg)
 		return
 	}
-	l.impl.Warn(msg, l.Args(args...))
+
+	l.impl.Warn(msg, args...)
 }
 
-func (l *LogImpl) Args(args ...LoggerArg) []pterm.LoggerArgument {
-	var loggerArgs []pterm.LoggerArgument
-
-	for _, arg := range args {
-		ptermArg := pterm.LoggerArgument{
-			Key:   arg.Key,
-			Value: arg.Value,
-		}
-
-		loggerArgs = append(loggerArgs, ptermArg)
+func (l *LogImpl) Error(msg string, args ...any) {
+	if len(args) == 0 {
+		l.impl.Error(msg)
+		return
 	}
-	return loggerArgs
+
+	l.impl.Error(msg, args...)
+}
+
+func (l *LogImpl) Debug(msg string, args ...any) {
+	if len(args) == 0 {
+		l.impl.Debug(msg)
+		return
+	}
+
+	l.impl.Debug(msg, args...)
 }
 
 func NewLogger(options LoggerOptions) LoggerInterface {
-	l := &LogImpl{
-		impl: defaultLogger,
-	}
+	var logger *slog.Logger
+	var jsonHandler *slog.JSONHandler
+	var textHandler *slog.TextHandler
 
-	if options.RegisterCallerFunction {
-		l.impl.WithCaller()
-	}
+	if options.EnableJSONHandler {
+		if options.EnableStdError {
+			jsonHandler = slog.NewJSONHandler(os.Stderr, nil)
+		} else {
+			jsonHandler = slog.NewJSONHandler(os.Stdout, nil)
+		}
 
-	levelSetFromEnv := env.GetStringOrDefault("LOG_LEVEL", "")
-
-	if options.WriteToStdout {
-		l.impl.WithWriter(os.Stdout)
+		logger = slog.New(jsonHandler)
 	} else {
-		l.impl.WithWriter(os.Stderr)
+		if options.EnableStdError {
+			textHandler = slog.NewTextHandler(os.Stderr, nil)
+		} else {
+			textHandler = slog.NewTextHandler(os.Stdout, nil)
+		}
+
+		logger = slog.New(textHandler)
 	}
 
-	if levelSetFromEnv == "" {
-		l.impl.WithLevel(pterm.LogLevelInfo)
-		return l
+	return &LogImpl{
+		impl: logger,
 	}
-
-	switch levelSetFromEnv {
-	case "info":
-		l.impl.WithLevel(pterm.LogLevelInfo)
-	case "warn":
-		l.impl.WithLevel(pterm.LogLevelWarn)
-	case "trace":
-		l.impl.WithLevel(pterm.LogLevelTrace)
-	case "debug":
-		l.impl.WithLevel(pterm.LogLevelDebug)
-	case "error":
-		l.impl.WithLevel(pterm.LogLevelError)
-	case "fatal":
-		l.impl.WithLevel(pterm.LogLevelFatal)
-	}
-
-	return l
 }

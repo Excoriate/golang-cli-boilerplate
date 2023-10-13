@@ -4,8 +4,6 @@ import (
 	"math/rand"
 	"strings"
 	"unicode/utf8"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -43,9 +41,4 @@ func GenerateRandomString(opt RandomStringOptions) string {
 	}
 
 	return string(b)
-}
-
-func GetUUID() string {
-	id := uuid.NewV4()
-	return id.String()
 }

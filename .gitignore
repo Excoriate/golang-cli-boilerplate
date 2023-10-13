@@ -51,3 +51,6 @@ terraform.tfstate.backup
 Cargo.lock
 target/
 golang-cli-boilerplate
+
+# TaskFile related files.
+.task

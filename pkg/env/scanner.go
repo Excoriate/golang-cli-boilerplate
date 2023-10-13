@@ -9,7 +9,7 @@ import (
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
 )
 
-// ScanEnvVarsFromHost Get all env vars.
+// ScanEnvVarsFromHost CreateWebRoute all env vars.
 func ScanEnvVarsFromHost() (types.EnvVars, error) {
 	result := make(types.EnvVars)
 
@@ -21,7 +21,7 @@ func ScanEnvVarsFromHost() (types.EnvVars, error) {
 	return result, nil
 }
 
-// ScanEnvVarsWithPrefix Get env vars with prefix.
+// ScanEnvVarsWithPrefix CreateWebRoute env vars with prefix.
 // Returns an error if any of the variables either do not exist or have an empty value.
 func ScanEnvVarsWithPrefix(prefix string) (types.EnvVars, error) {
 	result := make(types.EnvVars)

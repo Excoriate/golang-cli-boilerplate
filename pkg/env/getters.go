@@ -7,29 +7,32 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/Excoriate/golang-cli-boilerplate/pkg/types"
 )
 
-func GetFromMultiplePotentialKeys(keysAllowed []string) (types.EnvVar, error) {
+type VarSkeleton struct {
+	Key   string
+	Value string
+}
+
+func GetFromMultiplePotentialKeys(keysAllowed []string) (VarSkeleton, error) {
 	if len(keysAllowed) == 0 {
-		return types.EnvVar{}, errors.New("no keys allowed")
+		return VarSkeleton{}, errors.New("no keys allowed")
 	}
 
 	for _, key := range keysAllowed {
 		value, isSet := os.LookupEnv(key)
 		if isSet && value != "" {
-			return types.EnvVar{
+			return VarSkeleton{
 				Key:   key,
 				Value: value,
 			}, nil
 		}
 	}
 
-	return types.EnvVar{}, fmt.Errorf("no keys allowed were set. Keys allowed: %s", strings.Join(keysAllowed, ", "))
+	return VarSkeleton{}, fmt.Errorf("no keys allowed were set. Keys allowed: %s", strings.Join(keysAllowed, ", "))
 }
 
-// GetStringOrDefault Get string value from Viper by given key.
+// GetStringOrDefault CreateWebRoute string value from Viper by given key.
 func GetStringOrDefault(key, defaultValue string) string {
 	if key == "" {
 		return defaultValue
@@ -43,7 +46,7 @@ func GetStringOrDefault(key, defaultValue string) string {
 	return value
 }
 
-// GetNumberOrDefault Get number value from Viper by given key.
+// GetNumberOrDefault CreateWebRoute number value from Viper by given key.
 func GetNumberOrDefault(key string, defaultValue int) int {
 	if key == "" {
 		return defaultValue
@@ -64,7 +67,27 @@ func GetNumberOrDefault(key string, defaultValue int) int {
 	return parsedValue
 }
 
-// GetBoolOrDefault Get boolean value from Viper by given key.
+func GetNumberInt64OrDefault(key string, defaultValue int64) int64 {
+	if key == "" {
+		return defaultValue
+	}
+
+	value, isSet := os.LookupEnv(key)
+
+	if !isSet {
+		return defaultValue
+	}
+
+	// Parse value to int
+	parsedValue, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return defaultValue
+	}
+
+	return parsedValue
+}
+
+// GetBoolOrDefault CreateWebRoute boolean value from Viper by given key.
 func GetBoolOrDefault(key string, defaultValue bool) bool {
 	if key == "" {
 		return defaultValue
@@ -84,7 +107,7 @@ func GetBoolOrDefault(key string, defaultValue bool) bool {
 	return parsedValue
 }
 
-// GetDurationOrDefault Get duration value from Viper by given key.
+// GetDurationOrDefault CreateWebRoute duration value from Viper by given key.
 func GetDurationOrDefault(key string, defaultValue time.Duration) time.Duration {
 	if key == "" {
 		return defaultValue
@@ -102,4 +125,26 @@ func GetDurationOrDefault(key string, defaultValue time.Duration) time.Duration 
 	}
 
 	return parsedValue
+}
+
+func GetSliceOrDefault(key string, defaultValue []string) []string {
+	if key == "" {
+		return defaultValue
+	}
+
+	value, isSet := os.LookupEnv(key)
+	if !isSet {
+		return defaultValue
+	}
+
+	return strings.Split(value, ",")
+}
+
+func IsSet(key string) error {
+	_, isSet := os.LookupEnv(key)
+	if !isSet {
+		return fmt.Errorf("env var %s is not set", key)
+	}
+
+	return nil
 }

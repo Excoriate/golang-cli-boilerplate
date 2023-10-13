@@ -1,6 +1,10 @@
 package utils
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/google/uuid"
+)
 
 func RemoveDoubleQuotes(target string) string {
 	return strings.Trim(target, "\"")
@@ -48,4 +52,12 @@ func WrapAtLength(input string, length int) string {
 	// Add the last line
 	wrapped += "    " + line
 	return wrapped
+}
+
+func CleanPathFromExtraSlashes(target string) string {
+	return strings.ReplaceAll(target, "//", "/")
+}
+
+func GetUUID() string {
+	return uuid.New().String()
 }

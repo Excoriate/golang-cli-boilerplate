@@ -6,6 +6,7 @@ includes:
     taskfile: ./taskfiles/Taskfile.common.yml
 vars:
   BINARY_NAME: golang-cli-boilerplate
+  AIR_BIN: $HOME/go/bin/air
 tasks:
   default:
     cmds:
@@ -61,15 +62,38 @@ tasks:
     cmds:
       - echo "===========> Run unit test"
       - go test -race -v ./...
-      # ****************************************************
-      # CLI & Development Tasks
-      # ****************************************************
+  go-build:
+    desc: Build the binary
+    sources:
+      - ./main.go
+    generates:
+      - ./{{.BINARY_NAME}}
+    cmds:
+      - if [ -f ./{{.BINARY_NAME}} ]; then rm ./{{.BINARY_NAME}}; fi
+      - go build -o {{.BINARY_NAME}} ./main.go
+  go-run-bin:
+    desc: Run App
+    deps: [go-build]
+    cmds:
+      - ./{{.BINARY_NAME}}
+  go-run:
+    desc: Run App from the source code
+    deps: [go-build]
+    cmds:
+      - go run main.go {{.App_ARGS}}
+  go-ci:
+    desc: Run all the tests and code checks
+    cmds:
+      - task: go-style
+      - task: go-tidy
+      - task: go-test
+      - task: go-build
   cli-build:
     desc: Build CLI
     cmds:
       - |
         # Call the script
-        scripts/golang/go_build.sh {{.BINARY_NAME}}
+        scripts/golang/go_build.sh --binary {{.BINARY_NAME}} --path ./main.go
     vars:
       BINARY_PATH:
         sh: echo "{{.BINARY_PATH | default "dist"}}"
@@ -111,3 +135,13 @@ tasks:
         ./scripts/containers/build-and-run.sh --image={{.BINARY_NAME}} \
          --rebuild=false \
          --action=run
+  air-setup:
+    desc: Setup air for hot reload
+    cmds:
+      - |
+        ./scripts/golang/air.sh --force
+  air-run:
+    desc: Run air for hot reload
+    cmds:
+      - |
+        {{.AIR_BIN}} -c .air.toml

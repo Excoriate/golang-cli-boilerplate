@@ -145,8 +145,8 @@ func (b *Builder) WithDotEnvFile() InitOptionsFunc {
 func (b *Builder) WithLogger() InitOptionsFunc {
 	return func(o *IniDefaultFlagOptions) error {
 		b.logger = o11y.NewLogger(o11y.LoggerOptions{
-			RegisterCallerFunction: true,
-			WriteToStdout:          false, // It'll be written to stderr.
+			EnableJSONHandler: true,
+			EnableStdError:    true,
 		})
 
 		return nil

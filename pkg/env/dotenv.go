@@ -7,7 +7,52 @@ import (
 	"strings"
 
 	"github.com/Excoriate/golang-cli-boilerplate/pkg/utils"
+
+	"github.com/joho/godotenv"
 )
+
+type DotEnvLoader interface {
+	LoadByEnv(env string) error
+	LoadByName(dotEnvFileName string) error
+}
+
+type DotEnv struct{}
+
+func NewDotEnv() DotEnvLoader {
+	return &DotEnv{}
+}
+
+func load(fileName string) error {
+	if err := utils.FileExistAndItIsAFile(fileName); err != nil {
+		return err
+	}
+
+	return godotenv.Load(fileName)
+}
+
+func (d *DotEnv) LoadByName(dotEnvFileName string) error {
+	return load(dotEnvFileName)
+}
+
+func (d *DotEnv) LoadByEnv(env string) error {
+	if env == "" {
+		return fmt.Errorf("failed to load .env file, env is empty")
+	}
+
+	filename := fmt.Sprintf(".env.%s", env)
+	return load(filename)
+}
+
+type MockedUtils struct {
+	FileExistAndItIsAFile func(filename string) error
+}
+
+func (m *MockedUtils) FileExistAndIsAFileMock(filename string) error {
+	if filename == ".env.example" {
+		return nil
+	}
+	return fmt.Errorf("failed to load .env file, file does not exist")
+}
 
 type DotEnvFileReadOpt struct {
 	FilePath       string

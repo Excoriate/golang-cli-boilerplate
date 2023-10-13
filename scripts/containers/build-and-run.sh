@@ -8,7 +8,7 @@
 # Usage: ./script.sh --image=image-name [--rebuild=rebuild-flag] [--action=action] [--dockerfile=docker-file-name]
 #
 # Description: This bash script provides functionality to build and/or run Docker images.
-#              It's designed to be used as a simple CLI tool to manage Docker workflows.
+#              It's designed to be used as a simple App tool to manage Docker workflows.
 #
 # Parameters:
 #    --image:        The name of the Docker image [mandatory].

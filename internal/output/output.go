@@ -63,10 +63,7 @@ func (t *TerminalOutput) Show(options Options) error {
 			Headers: options.TableHeaders,
 			Data:    options.Data,
 		}); err != nil {
-			t.logger.Error("failed to show terminal output, error showing table", o11y.LoggerArg{
-				Key:   "error",
-				Value: err.Error(),
-			})
+			t.logger.Error("failed to show terminal output, error showing table", err)
 			return fmt.Errorf("failed to show terminal output, error showing table: %s", err.Error())
 		}
 
@@ -76,10 +73,7 @@ func (t *TerminalOutput) Show(options Options) error {
 			SaveInDisk: options.SaveInDisk,
 			Filename:   options.Filename,
 		}); err != nil {
-			t.logger.Error("failed to show terminal output, error showing json", o11y.LoggerArg{
-				Key:   "error",
-				Value: err.Error(),
-			})
+			t.logger.Error("failed to show terminal output, error showing json", err)
 			return fmt.Errorf("failed to show terminal output, error showing json: %s", err.Error())
 		}
 
@@ -89,19 +83,13 @@ func (t *TerminalOutput) Show(options Options) error {
 			SaveInDisk: options.SaveInDisk,
 			Filename:   options.Filename,
 		}); err != nil {
-			t.logger.Error("failed to show terminal output, error showing yaml", o11y.LoggerArg{
-				Key:   "error",
-				Value: err.Error(),
-			})
+			t.logger.Error("failed to show terminal output, error showing yaml", err)
 			return fmt.Errorf("failed to show terminal output, error showing yaml: %s", err.Error())
 		}
 	}
 
 	if options.SaveInDisk {
-		t.logger.Info("file successfully saved", o11y.LoggerArg{
-			Key:   "filename",
-			Value: options.Filename,
-		})
+		t.logger.Info(fmt.Sprintf("The output was saved in disk in the file: %s", options.Filename))
 	}
 
 	return nil
