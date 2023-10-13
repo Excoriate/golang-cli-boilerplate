@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.2...v1.1.0) (2023-10-13)
+
+
+### Features
+
+* add test, refactor logger ([2971b23](https://github.com/Excoriate/golang-cli-boilerplate/commit/2971b233a2a1597bfd0317172c90fe7943ba1a4f))
+
 ## [1.0.2](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.1...v1.0.2) (2023-09-05)
 
 
