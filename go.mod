@@ -17,6 +17,7 @@ require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/google/uuid v1.1.2
 	github.com/joho/godotenv v1.5.1
+	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/pterm/pterm v0.12.67
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5

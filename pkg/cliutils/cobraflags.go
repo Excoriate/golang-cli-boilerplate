@@ -79,11 +79,27 @@ func AddFlags(cmd *cobra.Command, flags []CobraFlagOptions) error {
 				cmd.Flags().StringToStringP(option.LongName, option.ShortName, option.DefaultValue.(map[string]string), option.Usage)
 				flag = cmd.Flags().Lookup(option.LongName)
 			}
+		case "slice":
+			if option.DefaultValue == nil {
+				option.DefaultValue = make([]string, 0)
+			}
+
+			if option.IsPersistent {
+				cmd.PersistentFlags().StringSliceP(option.LongName, option.ShortName, option.DefaultValue.([]string), option.Usage)
+				flag = cmd.PersistentFlags().Lookup(option.LongName)
+			} else {
+				cmd.Flags().StringSliceP(option.LongName, option.ShortName, option.DefaultValue.([]string), option.Usage)
+				flag = cmd.Flags().Lookup(option.LongName)
+			}
 		default:
 			return fmt.Errorf("unsupported flag type %s", option.FlagType)
 		}
 
 		if option.ViperBindingCfg.IsEnabled {
+			if option.ViperBindingCfg.EnvVariableNameInViper == "" {
+				return fmt.Errorf("env variable name in viper is required when the viper binding is enabled")
+			}
+
 			if err := viper.BindPFlag(option.ViperBindingCfg.EnvVariableNameInViper, flag); err != nil {
 				return fmt.Errorf("failed to bind flag %s to viper: %w", option.ViperBindingCfg.EnvVariableNameInViper, err)
 			}
