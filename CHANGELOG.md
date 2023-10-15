@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.1.0...v1.2.0) (2023-10-15)
+
+
+### Features
+
+* add sql client, enhance viper binding ([a69fc3d](https://github.com/Excoriate/golang-cli-boilerplate/commit/a69fc3dde9f5d182a892c3cddc0a7111890857ca))
+
 ## [1.1.0](https://github.com/Excoriate/golang-cli-boilerplate/compare/v1.0.2...v1.1.0) (2023-10-13)
 
 
